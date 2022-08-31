@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title><style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+   </section>
+   <section id="doc">
+      <input type="text" id="autocomplete" placeholder="Select a color..."></input>
+      <ul id="results"></ul>
+   </section>
+   <section id="footer">
+   </section>
+ </div>
+ <script>
+      const data = ["red", "blue", "green", "yellow", "purple", "orange", "black", "white", "brown"];
+
+      const autocomplete = document.getElementById("autocomplete");
+      const resultsHTML = document.getElementById("results");
+
+      autocomplete.oninput = function () {
+        let results = [];
+        const userInput = this.value;
+        resultsHTML.innerHTML = "";
+        if (userInput.length > 0) {
+          results = getResults(userInput);
+          resultsHTML.style.display = "block";
+          for (i = 0; i < results.length; i++) {
+            resultsHTML.innerHTML += "<li>" + results[i] + "</li>";
+          }
+        }
+      };
+
+      function getResults(input) {
+        const results = [];
+        for (i = 0; i < data.length; i++) {
+          if (input === data[i].slice(0, input.length)) {
+            results.push(data[i]);
+          }
+        }
+        return results;
+      }
+
+      resultsHTML.onclick = function (event) {
+        const setValue = event.target.innerText;
+        autocomplete.value = setValue;
+        this.innerHTML = "";
+      };
+    </script>
+</body>
+</html>
