@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pdf example</title><style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+#go_previous {
+    width: 150px;
+	margin: 10px 20px 10px 20px;
+}
+#go_next {
+    width: 150px;
+	margin: 10px 20px 10px 20px;
+}
+#current_page {
+	width: 50px;
+	margin: 0 50px 0 50px;
+ 	text-align:right;
+}
+#doctitle {
+  padding-left: 300px;
+  margin: 20px 0 20px 0;
+}
+#zoom_lev {
+	width: 50px;
+	margin: 0 50px 0 50px;
+ 	text-align:right;
+}
+
+#zoom_in {
+	width: 50px;
+	height: 50px;
+	margin: 20px 10px 20px 10px;
+}
+
+#zoom_out {
+	width: 50px;
+	height: 50px;
+	margin: 20px 10px 20px 10px;
+}
+#canvas_container {
+	margin: 20px 10px 20px 10px;
+
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+   </section>
+   <section id="doc">
+	  <h2 id="doctitle">pdf renderer</h1>
+      <div id="navigation_controls">
+         <button id="go_previous">Previous</button>
+         <input id="current_page" value="1" type="number"/>
+		 <span id="go_count">99</span>
+         <button id="go_next">Next</button>
+      </div>
+      <div id="zoom_controls">
+         <button id="zoom_in">+</button>
+		 <span id="zoom_lev"></span>
+         <button id="zoom_out">-</button>
+       </div>
+     <div id="canvas_container">
+	   <canvas id="the-canvas" style="border: 1px solid black; direction: ltr;"></canvas>
+	 </div>
+   </section>
+   <section id="footer">
+   </section>
+ </div>
+
+
+<!-- script src="//mozilla.github.io/pdf.js/build/pdf.js"></script> -->
+ <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+ <script>
+
+const url = 'New_Horizons.pdf';
+
+var pdfState = {
+  pdf: null,
+  dispPage: 1,
+  zoom: 2,
+  numPages: 1
+};
+
+var pdfjsLib = window['pdfjs-dist/build/pdf'];
+  //
+  // The workerSrc property shall be specified.
+  //
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+
+  //
+  // Asynchronous download PDF
+  //
+
+
+  const loadingTask = pdfjsLib.getDocument(url);
+
+  (async () => {
+    const pdf = await loadingTask.promise;
+	pdfState.pdf = pdf;
+
+	pdfState.numPages = pdf.numPages;
+
+	document.getElementById('go_count').textContent= 'total pages: ' + pdfState.numPages
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + pdfState.zoom
+//	pdf.getMetadata().then(function(stuff) {
+//		console.log(JSON.stringify(stuff,null,2))
+//	});
+    render();
+  })();
+
+async function render() {
+    //
+    // Fetch the first page
+    //
+	pdf = pdfState.pdf;
+    const page = await pdf.getPage(pdfState.dispPage);
+    const scale = pdfState.zoom;
+    const viewport = page.getViewport({ scale });
+    // Support HiDPI-screens.
+    const outputScale = window.devicePixelRatio || 1;
+
+    //
+    // Prepare canvas using PDF page dimensions
+    //
+    const canvas = document.getElementById("the-canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = Math.floor(viewport.width * outputScale);
+    canvas.height = Math.floor(viewport.height * outputScale);
+    canvas.style.width = Math.floor(viewport.width) + "px";
+    canvas.style.height = Math.floor(viewport.height) + "px";
+
+    const transform = outputScale !== 1 
+      ? [outputScale, 0, 0, outputScale, 0, 0] 
+      : null;
+
+    //
+    // Render PDF page into canvas context
+    //
+    const renderContext = {
+      canvasContext: context,
+      transform,
+      viewport,
+    };
+    page.render(renderContext);
+}
+
+document.getElementById('go_previous').addEventListener('click', (e) => {
+    if(pdfState.pdf == null|| pdfState.dispPage == 1)
+    return;
+
+    pdfState.dispPage -= 1;
+    document.getElementById("current_page").value = pdfState.dispPage;
+    render();
+});
+
+document.getElementById('go_next')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.dispPage > pdfState.numPages)
+    return;
+
+    pdfState.dispPage += 1;
+    document.getElementById("current_page").value = pdfState.dispPage;
+    render();
+});
+
+document.getElementById('zoom_in')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.zoom > 2.5)
+    return;
+
+	pdfState.zoom += 0.1;
+	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
+    render();
+});
+
+document.getElementById('zoom_out')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.zoom < 0.5)
+    return;
+
+	pdfState.zoom -= 0.1;
+	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
+    render();
+});
+
+
+ </script>
+</body>
+</html>
