@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+
+#editShowHtml {
+	width: 250px;
+	height: 80px;
+	background-color: pink;
+	margin: 20px 100px 20px 100px;
+	font-size: 24pt;
+	padding:10px;
+	border-radius: 25px;
+}
+
+#editShowHtml:hover {
+	cursor: position;
+	background-color: red;
+	color: white;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">button test</h3>
+	  <button id="editShowHtml" onclick="editShowHtmlFun(this)">Init Html</button>
+   </section>
+   <section id="footer">
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+	let state = true;
+	function editShowHtmlFun(e) {
+//		alert('state: ' + state);
+		if (state) {
+			e.style.backgroundColor = "green";
+			e.style.color ="yellow";
+			e.textContent="html"
+		} else {
+			e.style.backgroundColor = "blue";
+			e.style.color="orange";
+			e.textContent="text"
+		}
+		state = !state;
+	}
+ </script>
+</body>
+</html>
