@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+#acon {
+	border: 1px solid black;
+}
+#acon:hover #acong {
+	cursor:pointer;
+	stroke: green;
+	fill: green;
+	
+}
+#acong {
+	stroke: crimson;
+	fill: crimson;
+}
+.icontxt {
+	font-family: Calibri;
+	font-size: 96pt;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">image picker</h3>
+<svg id="acon" width="48" height="48" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" onclick="aconClickFun(this)"><g id="acong"><text class="icontxt" x="10.68493" y="84.507133">A</text><rect x="13" y="89" width="70" height="7" ry="3"/></g></svg>
+<!-- style="font-family:Calibri;font-size:250px;line-height:350px;stroke-width:.3" -->
+   </section>
+   <section id="footer">
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+function aconClickFun(e) {
+
+	alert('icon clicked!');
+}
+ </script>
+</body>
+</html>
