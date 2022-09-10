@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title><style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+  	display: flex; 
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+}
+
+.divcol {
+	width: 400px;
+	min-height: 300px;
+	margin: 10px;
+	border: 1px dashed purple;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+   </section>
+   <section id="doc">
+   </section>
+   <section id="footer">
+   </section>
+ </div>
+ <script>
+ function addDivCols(ncol) {
+	let doc = document.getElementById('doc');
+	for (let col=0; col<ncol; col++) {
+		let divEl = document.createElement('div');
+		divEl.setAttribute('id','col' + (col + 1));
+		let pEl =document.createElement('p');
+		pEl.textContent = divEl.id;
+		divEl.append(pEl);
+		const colClass = divEl.classList;
+		colClass.add('divcol');
+		doc.append(divEl);		
+	}
+ }
+
+
+ window.onload = function() {
+	console.log('window loaded!');
+	addDivCols(3);
+ } 
+ </script>
+</body>
+</html>
