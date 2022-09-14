@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+	position: relative;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+	position: relative;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+
+<!-- body { padding: 50px; } -->
+
+#tabnav {
+	position: relative;
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+	border: 1px dashed green;
+	min-height: 20px;
+}
+
+.content {
+	padding: 1em;
+	min-height: 200px;	
+	background: #eee;
+}
+.svgtab {
+	stroke: black;
+	stroke-width: 0px;
+	fill: #eee;
+}
+.svgtext {
+	font-size: 35px;
+	fill: black;
+	stroke-width: 0;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">tabbed content</h3>
+   </section>
+   <section id="footer">
+
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+// <svg width="150" height="75" version="1.1" viewBox="0 0 26 13" xmlns="http://www.w3.org/2000/svg"><g id="svgtab"><path d="m0 13 5-7h16l5 7z"/><text id="svgfont" x="6" y="12">home</text></g></svg>
+
+
+	var svgNS = "http://www.w3.org/2000/svg"
+	
+	var tabObj = [
+		'about',
+		'home',
+		'myBlog'
+	];
+
+	var active = 0;
+	var tabAct = 'tab_about';
+
+	function creTabs(tabObj) {
+		tabNum = tabObj.length;
+
+		let navEl = document.createElement('div');
+		navEl.id = 'tabnav';
+		let docEl = document.getElementById('doc');
+		docEl.append(navEl);		
+
+		for (let i=0; i< tabNum; i++) {
+//			console.log('tab[' + i + ']: ' + tabObj[i]);
+			let tabEl = creSvgTab(tabObj[i]);
+			tabEl.addEventListener('click',(event)=>{tabClickFun(event, i);});
+			navEl.append(tabEl);
+		}	
+
+		for (let i=0; i< tabNum; i++) {
+			let divEl = document.createElement('div');
+			divEl.style.display = 'none';
+			divEl.id = 'div_' + tabObj[i];
+			divEl.setAttribute('class','content');
+			let pEl= document.createElement('p');
+			pEl.textContent = 'Content: ' + tabObj[i];
+			divEl.append(pEl);
+			docEl.append(divEl);
+		}
+
+		let stTid = 'tab_' + tabObj[0];
+		document.getElementById(stTid).style.fill = '#eee';
+		let stid = 'div_' + tabObj[0];
+		document.getElementById(stid).style.display = 'block';
+
+	}
+
+
+	function creSvgTab(tab) {
+
+		const svgtab = document.createElementNS(svgNS, "svg");
+	    // set width and height
+    	svgtab.setAttribute('width', '150');
+    	svgtab.setAttribute('height', '50');
+		svgtab.setAttribute("viewBox", "0 0 260 60");
+		svgtab.setAttribute("version", "1.1");
+
+		const tabgrpEl = document.createElementNS(svgNS,'g');
+
+		const tabPathEl = document.createElementNS(svgNS,'path');
+		tabPathEl.setAttribute('d', 'm0 70 50-70h160l50 70z');
+		tabPathEl.setAttribute('class', 'svgtab');		
+		tabPathEl.id = 'tab_' + tab; 
+		tabPathEl.style.fill = '#ccc';
+		tabgrpEl.append(tabPathEl);
+		svgtab.addEventListener('mouseover',(event)=>{tabMoFun(event, tabPathEl, tabTextEl);});
+		svgtab.addEventListener('mouseleave',(event)=>{tabMlFun(event, tabPathEl, tabTextEl);});
+
+		const tabTextEl = document.createElementNS(svgNS,'text');
+
+		tabTextEl.setAttribute('class', 'svgtext');		
+		tabTextEl.setAttribute('x', '60');		
+		tabTextEl.setAttribute('y', '50');		
+		tabTextEl.textContent = tab;
+		tabgrpEl.append(tabTextEl);
+
+		svgtab.append(tabgrpEl);
+		return svgtab;
+	}
+
+	function tabClickFun(e, i) {
+//		console.log('tabclick[' + i + ']: ' + tabObj[i] + ' active: ' + active);
+		let actTId = 'tab_' + tabObj[active];
+		document.getElementById(actTId).style.fill = '#ccc';
+		let actDId = 'div_' + tabObj[active];
+		document.getElementById(actDId).style.display = 'none';
+
+		let stTId = 'tab_' + tabObj[i];
+		document.getElementById(stTId).style.fill = '#eee';
+		let stId = 'div_' + tabObj[i];
+		document.getElementById(stId).style.display = 'block';
+		active = i;
+		tabAct = stTId;
+	}
+
+	function tabMoFun(e, tabPath, tabText) {
+//	console.log('new mouse over');
+		if (e.target.id != '') {
+//	console.log('mouse over: ' + e.target.id + ': ' + tabAct);
+			if (e.target.id != tabAct) {
+				tabPath.style.fill = 'aqua';
+				tabPath.style.cursor = 'pointer';
+				tabText.style.cursor = 'pointer';
+			}
+		} else {
+//	console.log('mouse over out');
+		}
+		setTimeout(function() {},100);
+	}
+
+
+	function tabMlFun(e, tabPath, tabText) {
+//	console.log('mouse leave! ' + e.target.id);
+		if (tabPath.style.fill == 'aqua') { 
+			tabPath.style.fill = '#ccc';
+			tabPath.style.cursor = 'default';
+			tabText.style.cursor = 'default';
+		}
+	}
+
+
+	function creSvgCircle() {
+		const svg1 = document.createElementNS(svgNS, "svg");
+	    // set width and height
+    	svg1.setAttribute("width", "100");
+    	svg1.setAttribute("height", "100");
+
+		 const cir1 = document.createElementNS(
+      svgNS,
+      "circle",
+    );
+
+	cir1.setAttribute("cx", "50");
+    cir1.setAttribute("cy", "50");
+    cir1.setAttribute("r", "30");
+    cir1.setAttribute("fill", "purple");
+
+	svg1.style.position = 'absolute';
+	svg1.style.top = 0;
+	svg1.style.left = 0;
+    // attach it to the container
+    svg1.appendChild(cir1);
+
+    // attach container to document
+    document.getElementById("footer").appendChild(svg1);
+
+	}
+
+
+	function init_div() {
+//	  console.log('init');
+	  let contDivs = document.getElementsByClassName('content');
+		for (let i=0; i< contDivs.length; i++) {
+			if (i==1) {continue;}
+			contDivs[i].style.display = 'none';
+		}
+	  
+	}	
+
+	function tabclick(event, tab, idx) {
+		event.preventDefault();
+//		console.log('tab[' + idx + ']: ' + tab.id);
+	  	let contDivs = document.getElementsByClassName('content');
+	  	let tabs = document.getElementsByClassName('tab');
+
+		for (let i=0; i< contDivs.length; i++) {
+			if (i==idx) {
+				contDivs[i].style.display = 'block';
+				tabs[i].style.backgroundColor = '#eee';				
+				continue;
+			}
+			contDivs[i].style.display = 'none';
+			tabs[i].style.backgroundColor = '#eee';				
+		}
+
+	}
+
+	let tabs = document.getElementsByClassName('tab');
+//	console.log('tabs: ' + tabs + ':' + tabs.length);
+	for (let i=0; i< tabs.length; i++) {
+		tabs[i].addEventListener('click', (event)=>{tabclick(event, tabs[i], i);});
+	}
+
+	window.onload = (event) => {
+	  init_div();
+	  creSvgCircle();
+	  creTabs(tabObj);
+	}
+// <svg class="tab" version="1.1" viewBox="0 0 26 13" xmlns="http://www.w3.org/2000/svg"><g id="svgtab"><path d="m0 13 5-7h16l5 7z"><text x="6" y="12">home</text></g></svg>
+
+ </script>
+</body>
+</html>
