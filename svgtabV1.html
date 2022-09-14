@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+	position: relative;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+	position: relative;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+
+<!-- body { padding: 50px; } -->
+
+nav {
+	position: relative;
+	z-index: 1;
+	white-space: nowrap;
+	margin-left: 7px;
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.tab {
+	width: 150px;
+}
+
+.tab:hover {
+	cursor: pointer;
+	background-color:aqua;
+}
+
+.content {
+	display: block;
+	margin: -8px 0 30px 0px;
+	padding: 1em;
+	border-radius: 3px;
+	background: #eee;
+}
+#svgtab {
+	stroke: black;
+	stroke-width: 0px;
+	fill: #eee;
+}
+#svgfont {
+	font-size: 5px;
+	fill: black;
+	stroke-width: 0;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">tabbed content</h3>
+	 <nav>
+<svg width="150" height="75" version="1.1" viewBox="0 0 26 13" xmlns="http://www.w3.org/2000/svg"><g id="svgtab"><path d="m0 13 5-7h16l5 7z"/><text id="svgfont" x="6" y="12">home</text></g></svg>
+	   <a class="tab" id="tabHome">Home</a>
+	   <a class="tab" id="tabMyBlog">My Blog</a>
+	   <a class="tab" id="tabAbout">About</a>
+    </nav>
+    <div class="content" id="contHome">
+	 Content: Home
+    </div>
+    <div class="content" id="contAbout">
+	 Content: MyBlog
+    </div>
+    <div class="content" id="contMyBlog">
+	 Content: About
+    </div>
+
+   </section>
+   <section id="footer">
+
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+	var svgNS = "http://www.w3.org/2000/svg"
+	function creSvgEl() {
+		const svg1 = document.createElementNS(svgNS, "svg");
+	    // set width and height
+    	svg1.setAttribute("width", "100");
+    	svg1.setAttribute("height", "100");
+
+		 const cir1 = document.createElementNS(
+      svgNS,
+      "circle",
+    );
+
+	cir1.setAttribute("cx", "50");
+    cir1.setAttribute("cy", "50");
+    cir1.setAttribute("r", "30");
+    cir1.setAttribute("fill", "red");
+
+	svg1.style.position = 'absolute';
+	svg1.style.top = 0;
+	svg1.style.left = 0;
+    // attach it to the container
+    svg1.appendChild(cir1);
+
+    // attach container to document
+    document.getElementById("footer").appendChild(svg1);
+
+	}
+
+
+	function init_div() {
+	  console.log('init');
+	  let contDivs = document.getElementsByClassName('content');
+		for (let i=0; i< contDivs.length; i++) {
+			if (i==1) {continue;}
+			contDivs[i].style.display = 'none';
+		}
+	  
+	}	
+
+	function tabclick(event, tab, idx) {
+		event.preventDefault();
+		console.log('tab[' + idx + ']: ' + tab.id);
+	  	let contDivs = document.getElementsByClassName('content');
+	  	let tabs = document.getElementsByClassName('tab');
+
+		for (let i=0; i< contDivs.length; i++) {
+			if (i==idx) {
+				contDivs[i].style.display = 'block';
+				tabs[i].style.backgroundColor = '#eee';				
+				continue;
+			}
+			contDivs[i].style.display = 'none';
+			tabs[i].style.backgroundColor = '#eee';				
+		}
+
+	}
+
+	let tabs = document.getElementsByClassName('tab');
+	console.log('tabs: ' + tabs + ':' + tabs.length);
+	for (let i=0; i< tabs.length; i++) {
+		tabs[i].addEventListener('click', (event)=>{tabclick(event, tabs[i], i);});
+	}
+
+	window.onload = (event) => {
+	  init_div();
+	  creSvgEl();
+	}
+// <svg class="tab" version="1.1" viewBox="0 0 26 13" xmlns="http://www.w3.org/2000/svg"><g id="svgtab"><path d="m0 13 5-7h16l5 7z"><text x="6" y="12">home</text></g></svg>
+
+ </script>
+</body>
+</html>
