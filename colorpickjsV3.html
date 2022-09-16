@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+#acon {
+	border: 1px solid black;
+}
+#acon:hover #acong {
+	cursor:pointer;
+	stroke: green;
+	fill: green;
+	
+}
+#acong {
+	stroke: crimson;
+	fill: crimson;
+}
+.icontxt {
+	font-family: Calibri;
+	font-size: 96pt;
+}
+#colcont {
+	position: absolute;
+	width: 300px;
+	height: 330px;
+	border: 1px solid blue;
+	text-align: center;
+}
+
+#colpick {
+	position: absolute;
+	width: 300px;
+	height: 300px;
+	border: 1px solid green;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.divcol {
+    width: 50px;
+    min-height: 200px;
+    margin: 2px;
+    border: 1px dashed purple;
+}
+
+.cell {
+	width: 40px;
+	height: 40px;
+	margin: 5px 2px;
+	border: 1px solid black;
+	border-radius: 20px;
+}
+
+.col {
+	margin: 2px;
+	border: 1px solid orange;
+}
+.cell:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">image picker</h3>
+	<svg id="acon" width="48" height="48" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <g id="acong"><text class="icontxt" x="10.68493" y="84.507133">A</text><rect x="13" y="89" width="70" height="7" ry="3"/></g></svg>
+   </section>
+   <section id="footer">
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+
+class colorPicker {
+  constructor (colObj) { 
+	this.colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+	this.ncol = colObj.ncol;
+	this.parent = colObj.parent;
+	this.acon = colObj.acon;
+  }
+  aconClickFun(e) {
+	alert('icon clicked!');
+  }
+
+  gridColFun(id) {	
+	alert('col clicked!' + id);
+  }
+
+
+  init() {
+	let parEl = document.getElementById(this.parent);
+	let divEl = document.createElement('div');
+	divEl.id = 'colCont';
+	let pEl = document.createElement('p');
+	pEl.testContent = 'pick color';
+	divEl.append(pEl);
+	let divColEl = document.createElement('div');
+	divColEl.id = 'colpick';
+	divEl.append(divColEl);
+	this.divColEl = divColEl;
+	parEl.append(divEl);
+	let aconEl = document.getElementById(this.acon);
+	aconEl.addEventListener('click', (event) => {this.aconClickFun(event)});
+  }
+
+  cellClickFun(e, arg) {
+	e.preventDefault();
+//	console.log('click cell: ' + arg + ':' + colorArray[arg]);
+	let agEl= document.getElementById('acong');
+	agEl.style.fill = this.colorArray[arg];
+	agEl.style.stroke = this.colorArray[arg];
+}
+
+  addDivCols() {
+//    let colpal = document.getElementById('colpick');
+//	const cellclick_handler = (event, arg) => this.cellClickFun(event, arg);
+	let colpal = this.divColEl;
+    for (let col=0; col<this.ncol; col++) {
+        let divEl = document.createElement('div');
+        divEl.setAttribute('id','c' + (col + 1));
+        let pEl =document.createElement('p');
+        pEl.textContent = divEl.id;
+        divEl.append(pEl);
+        const colClass = divEl.classList;
+        colClass.add('divcol');
+
+		for (let row=0; row<5; row++) {
+			let cellEl = document.createElement('div');
+        	cellEl.setAttribute('id',(row+1) + ':' + (col + 1));
+			cellEl.addEventListener('click', (event) => {this.cellClickFun(event, row*5 + col)});
+        	let pcEl =document.createElement('p');
+        	pcEl.textContent = cellEl.id;
+			cellEl.style.backgroundColor = this.colorArray[5*row + col]
+        	cellEl.append(pcEl);
+        	const rowClass = cellEl.classList;
+        	rowClass.add('cell');
+        	divEl.append(cellEl);
+		}
+        colpal.append(divEl);
+    }
+ }
+}
+window.onload = function(){
+	let colPickObj = {
+		ncol: 5,
+		parent: 'doc',
+		acon: 'acon',
+	};
+	let colPick = new colorPicker(colPickObj);
+	colPick.init();
+	colPick.addDivCols();
+};
+ </script>
+</body>
+</html>
