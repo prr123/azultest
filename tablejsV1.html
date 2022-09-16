@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+	position: relative;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+	position: relative;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+
+.tblClass {
+	height: 100px;
+	width: 300px;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+th, td {
+        border: 1px solid black;
+        padding: 2px;
+}
+#tblA {
+  margin: auto;
+}
+.tblARow0 {
+}
+.tblACell:hover {
+  background-color: pink;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">table test</h3>
+   </section>
+   <section id="footer">
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+
+class tableWidget {
+
+	constructor(tblObj) {
+		Object.assign(this,tblObj);
+		this.focusCol = 0;
+		this.focusRow = 0;
+	}
+
+    keydFun(e) {
+        let key = e.key;
+        let cel = e.target;
+        let ctrlkey = e.ctrlKey;
+        let icol = cel.cellIndex;
+        let irow = cel.parentNode.rowIndex;
+//      console.log('key down1: ' + key + ' control: ' + ctrlkey + ' row: ' + irow + ' col: ' + icol);
+		let tbl = this.el;
+
+        switch (key) {
+        case "ArrowLeft":
+            if (ctrlkey) {
+                if (icol>0) tbl.rows[irow].cells[icol-1].focus();
+            }
+        break;
+        case "ArrowRight":
+        // Right pressed
+            if (ctrlkey) {
+                if (icol < this.cols) tbl.rows[irow].cells[icol+1].focus();
+            }
+            break;
+        case "ArrowUp":
+        // Up pressed
+            if (ctrlkey) {
+                if (irow > 0) tbl.rows[irow-1].cells[icol].focus();
+            }
+            break;
+        case "ArrowDown":
+        // Down pressed
+            if (ctrlkey) {
+                if (irow < this.rows) tbl.rows[irow+1].cells[icol].focus();
+            }
+            break;
+        default:
+            return;
+        }
+
+//      console.log('key down2: ' + key + ' control: ' + ctrlkey );
+    }
+
+	inpFun(e) {
+
+	}
+
+	clickFun(e) {
+        let cel = e.target;
+        let icol = cel.cellIndex;
+        let irow = cel.parentNode.rowIndex;
+        console.log('click' + cel + ' icol: ' + icol + ' irow: ' + irow );
+		cel.focus();
+	}
+
+    focoutFun(e) {
+		let el = e.target;
+//		console.log("table: ' + el)
+//        let cel = e.target;
+//        let icol = cel.cellIndex;
+//        let irow = cel.parentNode.rowIndex;
+//        tabobj.dtab[irow-1][icol-1].nval = cel.textContent;
+//        console.log('blur: ' + cel.textContent + ' |icol: ' + icol + ' irow: ' + irow );
+    }
+
+	init() {
+	  console.log(this);
+      let tbl = document.createElement('table');
+	  this.el = tbl;
+      tbl.id = this.id;
+	  tbl.className = this.class;
+
+	  if (this.head) {
+        let theader = tbl.createTHead();
+        let hrow = theader.insertRow();
+        let hcell = hrow.insertCell();
+	  }
+
+      let tbody = tbl.createTBody();
+	  for (let row=0; row < this.rows; row++) {
+        let trow = tbody.insertRow();
+		trow.id = this.id + 'Row' + row;
+		trow.classList.add((this.id + 'Row'), (this.id + 'Row' + row));  
+		for (let col=0; col < this.cols; col++) {
+            let newCell = trow.insertCell();
+			newCell.id = this.id + 'R' + row + 'C' + col;
+			newCell.classList.add((this.id + 'Cell'), (this.id + 'CelCol' + col), (this.id + 'CelRow' + row));
+			newCell.textContent = 'R' + row + 'C' + col;
+			if (this.edit) {newCell.contentEditable = 'true'};
+      		newCell.addEventListener('input',(event) => {this.inpFun(event)});
+      		newCell.addEventListener('click',(event) => {this.clickFun(event)});
+      		newCell.addEventListener('keydown',(event) => {this.keydFun(event)});
+		}
+	  }
+
+      tbl.addEventListener('blur',(event) => {this.focoutFun(event)});
+	  return tbl;
+	}
+
+	load(datObj) {
+	
+
+	}
+}
+
+/*
+    let tabobj = {lcol: -1, lrow: -1 , maxcol: -1, maxrow: -1};
+
+    creTable() {
+
+        num_rows = dataArr.length
+        tabobj.maxrow = num_rows
+        num_cols = dataArr[0].length
+        tabobj.maxcol = num_cols
+
+        console.log('rows: ' + num_rows + ' cols: ' + num_cols)
+
+        let el = document.getElementById("main_right");
+        let irow = 0;
+        for (let row of dataArr) {
+            let trow = tbody.insertRow();
+            let newCell = trow.insertCell();
+            newCell.textContent = irow;
+            irow++;
+            for (let cell of row) {
+                let newCell = trow.insertCell();
+                newCell.textContent = cell.val;
+                newCell.contentEditable = 'true';
+            }
+        }
+
+        el.appendChild(table);
+    }
+
+    tabobj.telfunc = function(e) {
+        let cel = e.target
+        let icol = cel.cellIndex
+        let irow = cel.parentNode.rowIndex
+//        console.log('input' + cel + ' icol: ' + icol + ' irow: ' + irow );
+    }
+
+    tabobj.telfunc2 = function(e) {
+        let cel = e.target;
+        let icol = cel.cellIndex;
+        let irow = cel.parentNode.rowIndex;
+        console.log('click' + cel + ' icol: ' + icol + ' irow: ' + irow );
+    }
+
+    tabobj.focout = function(e) {
+        let cel = e.target;
+        let icol = cel.cellIndex;
+        let irow = cel.parentNode.rowIndex;
+        tabobj.dtab[irow-1][icol-1].nval = cel.textContent;
+        console.log('blur: ' + cel.textContent + ' |icol: ' + icol + ' irow: ' + irow );
+    }
+
+    tabobj.keyd = function(e) {
+        let key = e.key;
+        let cel = e.target;
+        let ctrlkey = e.ctrlKey;
+        let icol = cel.cellIndex;
+        let irow = cel.parentNode.rowIndex;
+//      console.log('key down1: ' + key + ' control: ' + ctrlkey + ' row: ' + irow + ' col: ' + icol);
+
+        switch (key) {
+        case "ArrowLeft":
+            if (ctrlkey) {
+                if (icol>1) tabobj.tab.rows[irow].cells[icol-1].focus();
+            }
+        break;
+        case "ArrowRight":
+        // Right pressed
+            if (ctrlkey) {
+                if (icol < tabobj.maxcol) tabobj.tab.rows[irow].cells[icol+1].focus();
+            }
+
+            break;
+
+        case "ArrowUp":
+        // Up pressed
+            if (ctrlkey) {
+                if (irow > 1) tabobj.tab.rows[irow-1].cells[icol].focus();
+            }
+
+            break;
+        case "ArrowDown":
+        // Down pressed
+            if (ctrlkey) {
+                if (irow < tabobj.maxrow) tabobj.tab.rows[irow+1].cells[icol].focus();
+            }
+
+            break;
+        default:
+            return;
+        }
+//      console.log('key down2: ' + key + ' control: ' + ctrlkey );
+    }
+
+    tabobj.keyup = function(e) {
+        let key = e.key;
+    }
+
+
+
+    tabobj.butfunc = function(){
+        let focus_el = tab2.rows[1].cells[1];
+        focus_el.focus();
+        console.log('button click');
+    }
+}
+*/
+
+	let dat_tab = [
+            ['John','Crow'],
+            ['Jim','Beam'],
+            ['Peter','Rabbit']
+        ];
+
+
+  window.onload = function(){
+
+  let tblObj = {
+	rows: 2,
+	cols: 3,
+	header: false,
+	id: 'tblA',
+	class: 'tblClass',
+	edit: 'true',
+  }
+
+  let testTable = new tableWidget(tblObj);
+  let tbl = testTable.init();	
+
+  let doc = document.getElementById('doc');
+  doc.append(tbl);
+}
+
+ </script>
+</body>
+</html>
