@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pdf example</title><style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+.doch3 {
+    color: MediumPurple;
+    margin: auto;
+    text-align:center;
+    padding: 0.5em;
+}
+.navbut {
+    width: 80px;
+	margin: 10px 20px 10px 20px;
+}
+
+.navinp {
+	width: 70px;
+	margin: 0 50px 0 50px;
+ 	text-align:right;
+}
+#doctitle {
+  padding-left: 300px;
+  margin: 20px 0 20px 0;
+}
+
+#canvas_container {
+	margin: 20px 10px 20px 10px;
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- script src="//mozilla.github.io/pdf.js/build/pdf.js"></script> -->
+ <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+ <script src= "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
+ <script>
+class pdfViewer {
+  constructor (pdfState) {
+    Object.assign(this,pdfState);
+    this.pdfjsLib = window['pdfjs-dist/build/pdf'];
+	this.pdfjsLib.GlobalWorkerOptions.workerSrc = window['pdfjs-dist/build/pdf.worker'];
+  }
+
+  init(docid) {
+	let contEl = document.getElementById(docid);
+	if (contEl==null) {
+		throw new Error('conteiner El with id [' + docid + '] not found');
+	} 
+
+	let pdfDiv = document.createElement('div');
+	pdfDiv.id = 'pdfdiv';
+	contEl.append(pdfDiv);
+
+	let navDiv = document.createElement('div');
+	navDiv.id = 'navdiv';
+	navDiv.style.display = 'flex';
+	navDiv.style.flexDirection = 'row';
+	navDiv.style.border = 'thin solid black';
+	navDiv.style.minHeight = '50px';
+	pdfDiv.append(navDiv);
+
+	let pgCtl = document.createElement('div');
+	pgCtl.id = 'navControl';
+	pgCtl.style.border = 'thin dashed green';
+	pgCtl.style.minHeight = '40px';
+	pgCtl.style.minWidth = '100px';
+	pgCtl.style.margin = '5px';
+	navDiv.append(pgCtl);	
+
+	let butprev = document.createElement('button');
+	butprev.id = 'go_previous';
+	butprev.className = 'navbut';
+	butprev.textContent = '<';
+	pgCtl.append(butprev);
+
+
+	let pginp = document.createElement('input');
+	pginp.type = 'number';
+	pginp.id = 'current_page';
+	pginp.className = 'navinp';
+	pginp.value = '1';
+	pgCtl.append(pginp);
+	
+	let butlast = document.createElement('button');
+	butlast.id = 'go_last';
+	butlast.className = 'navbut';
+	butlast.textContent = '>>';
+	pgCtl.append(butlast);
+	
+
+	let butnext = document.createElement('button');
+	butnext.id = 'go_next';
+	butnext.className = 'navbut';
+	butnext.textContent = '>';
+	pgCtl.append(butnext);
+
+
+	let zoomCtl = document.createElement('div');	
+	zoomCtl.id = 'zoomControl';
+	zoomCtl.style.border = 'thin dashed aqua';
+	zoomCtl.style.minHeight = '40px';
+	zoomCtl.style.minWidth = '100px';
+	zoomCtl.style.margin = '5px';
+	navDiv.append(zoomCtl);	
+
+	let zin = document.createElement('button');
+	zin.id = 'zoom-in';
+	zin.className = 'navbut';
+	zin.textContent = '+';
+	zoomCtl.append(zin);
+
+	let zlev = document.createElement('input');
+	zlev.type = 'number';
+	zlev.className = 'navinp';
+	zlev.id = 'zlev';
+	zlev.value = '1.0';
+	zoomCtl.append(zlev);
+
+
+	let zout = document.createElement('button');
+	zout.id = 'zoom-out';
+	zout.className = 'navbut';
+	zout.textContent = '-';
+	zoomCtl.append(zout);
+
+	let pdfviewdiv = document.createElement('div');
+	pdfviewdiv.id = 'canvas-container';
+	pdfDiv.append(pdfviewdiv);	
+	
+	let pdfcanvas = document.createElement('canvas');
+	pdfcanvas.id = 'the-canvas';
+	pdfcanvas.style.border = 'thin solid black';
+	pdfcanvas.direction = 'ltr';
+	pdfviewdiv.append(pdfcanvas);	
+ }
+
+}
+/*
+  const loadingTask = pdfjsLib.getDocument(url);
+
+  (async () => {
+    const pdf = await loadingTask.promise;
+	pdfState.pdf = pdf;
+
+	pdfState.numPages = pdf.numPages;
+
+	document.getElementById('go_count').textContent= 'total pages: ' + pdfState.numPages
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + pdfState.zoom
+//	pdf.getMetadata().then(function(stuff) {
+//		console.log(JSON.stringify(stuff,null,2))
+//	});
+    render();
+  })();
+
+async function render() {
+    //
+    // Fetch the first page
+    //
+	pdf = pdfState.pdf;
+    const page = await pdf.getPage(pdfState.dispPage);
+    const scale = pdfState.zoom;
+    const viewport = page.getViewport({ scale });
+    // Support HiDPI-screens.
+    const outputScale = window.devicePixelRatio || 1;
+
+    //
+    // Prepare canvas using PDF page dimensions
+    //
+    const canvas = document.getElementById("pdfCanvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = Math.floor(viewport.width * outputScale);
+    canvas.height = Math.floor(viewport.height * outputScale);
+    canvas.style.width = Math.floor(viewport.width) + "px";
+    canvas.style.height = Math.floor(viewport.height) + "px";
+
+    const transform = outputScale !== 1 
+      ? [outputScale, 0, 0, outputScale, 0, 0] 
+      : null;
+
+    //
+    // Render PDF page into canvas context
+    //
+    const renderContext = {
+      canvasContext: context,
+      transform,
+      viewport,
+    };
+    page.render(renderContext);
+}
+
+document.getElementById('go_previous').addEventListener('click', (e) => {
+    if(pdfState.pdf == null|| pdfState.dispPage == 1)
+    return;
+
+    pdfState.dispPage -= 1;
+    document.getElementById("current_page").value = pdfState.dispPage;
+    render();
+});
+
+document.getElementById('go_next')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.dispPage > pdfState.numPages)
+    return;
+
+    pdfState.dispPage += 1;
+    document.getElementById("current_page").value = pdfState.dispPage;
+    render();
+});
+
+document.getElementById('zoom_in')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.zoom > 2.5)
+    return;
+
+	pdfState.zoom += 0.1;
+	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
+    render();
+});
+
+document.getElementById('zoom_out')
+    .addEventListener('click', (e) => {
+    if(pdfState.pdf == null || pdfState.zoom < 0.5)
+    return;
+
+	pdfState.zoom -= 0.1;
+	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
+	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
+    render();
+});
+*/
+
+ class htmlPage {
+    constructor (pgObj) {
+      Object.assign(this,pgObj);
+    }
+
+    init(mainId) {
+      let divMain = document.createElement('div');
+      divMain.id = 'main';
+      document.body.append(divMain);
+
+      let header = document.createElement('header');
+      header.id = 'header';
+      this.addHead('header',header);
+      divMain.append(header);
+      let doc = document.createElement('section');
+      doc.id = 'doc';
+      this.addHead('pdf viewer',doc);
+      divMain.append(doc);
+      let footer = document.createElement('footer');
+      footer.id = 'footer';
+      this.addHead('footer',footer);
+      divMain.append(footer);
+
+    }
+    addHead(title, parentEl) {
+      let hdtitle = document.createElement('h3');
+      hdtitle.textContent=title;
+      hdtitle.className='doch3';
+      parentEl.append(hdtitle);
+    }
+}
+
+window.onload = function() {
+
+  let pdfStart = {
+    dispPage: 1,
+    zoom: 2,
+  };
+  const url = 'New_Horizons.pdf';
+
+        let azul = new htmlPage;
+        azul.init('main');
+
+  let pdfView = new pdfViewer(pdfStart);
+  try {
+    pdfView.init('doc');
+  }
+  catch(err) {
+	console.log('error: ' + err);
+  }
+}
+
+ </script>
+</body>
+</html>
