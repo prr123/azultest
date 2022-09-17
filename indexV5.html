@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+	position: relative;
+}
+#doc {
+	min-height: 500px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+	position: relative;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+
+</style>
+</head>
+<body>
+</body>
+<script>
+  class htmlPage {
+	constructor (pgObj) {
+      Object.assign(this,pgObj);	
+	}		
+
+	init(mainId) {	  
+	  let divMain = document.createElement('div');
+	  divMain.id = 'main';
+	  document.body.append(divMain);
+	  
+	  let header = document.createElement('header');
+	  header.id = 'header';
+	  this.addHead('header',header);
+	  divMain.append(header);
+	  let doc = document.createElement('section');
+	  doc.id = 'doc';
+	  this.addHead('docmain',doc);
+	  divMain.append(doc);
+	  let footer = document.createElement('footer');
+	  footer.id = 'footer';
+	  this.addHead('footer',footer);
+	  divMain.append(footer);
+
+	}
+	addHead(title, parentEl) {
+	  let hdtitle = document.createElement('h3');
+	  hdtitle.textContent=title;
+	  hdtitle.className='doch3';
+	  parentEl.append(hdtitle);
+	}
+
+  }
+
+	window.onload = (event) => {
+		let azul = new htmlPage;
+		azul.init('main');
+
+	}
+ </script>
+</html>
