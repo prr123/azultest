@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azul Software</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+#main {
+	width: calc(100% - 300px);
+	border: 1px solid blue;
+	min-height: 300px;
+}
+#header {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid DeepPink;
+}
+#doc {
+	min-height: 800px;
+	margin: 10px;
+	border: 1px solid Tomato;
+	position: relative;
+}
+
+#footer {
+	height: 100px;
+	margin: 10px;
+	border: 1px solid green;
+}
+.doch3 {
+	color: MediumPurple;
+	margin: auto;
+	text-align:center;
+	padding: 0.5em;
+}
+#acon {
+	border: 1px solid black;
+}
+#acon:hover #acong {
+	cursor:pointer;
+	stroke: green;
+	fill: green;
+	
+}
+#acong {
+	stroke: crimson;
+	fill: crimson;
+}
+.icontxt {
+	font-family: Calibri;
+	font-size: 96pt;
+}
+#colCont {
+	position: absolute;
+	width: 690px;
+	height: 530px;
+	border: 1px solid blue;
+	text-align: center;
+}
+
+#colpick {
+	position: absolute;
+	width: 690px;
+	height: 500px;
+	border: 1px solid green;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.divcol {
+    width: 44px;
+    min-height: 200px;
+}
+
+.cell {
+	width: 40px;
+	height: 40px;
+	margin: 5px 1px;
+	border: 1px solid black;
+	border-radius: 20px;
+}
+
+.col {
+	margin: 2px;
+	border: 1px solid orange;
+}
+.cell:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+ <div id="main">
+   <section id="header">
+	<h3 class="doch3">header</h3>
+   </section>
+   <section id="doc">
+	<h3 class="doch3">image picker</h3>
+	<svg id="acon" width="48" height="48" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> <g id="acong"><text class="icontxt" x="10.68493" y="84.507133">A</text><rect x="13" y="89" width="70" height="7" ry="3"/></g></svg>
+   </section>
+   <section id="footer">
+	<h3 class="doch3">footer</h3>
+   </section>
+ </div>
+ <script>
+
+class colorPicker {
+  constructor (colObj) { 
+/*
+	this.colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+*/
+	this.colorArray = ['#000', '#424242', '#616161', '#757575', '#9e9e9e','#bdbdbd','#e0e0e0','#eeeeee','#fffff',
+                    '#b71c1c', '#c62828', '#d32f2f', '#e53935', '#f44336', '#ef5350', '#e57373', '#ef9a9a', '#ffcdd2',
+                    '#880e4f', '#ad1457', '#c2185b', '#d81b60', '#e91e63', '#ec407a', '#f06292', '#f48fb1', '#f8bbd0',
+                    '#4a148c', '#6a1b9a', '#7b1fa2', '#8e24aa', '#9c27b0', '#ab47bc', '#ba68c8', '#ce93d8', '#e1bee7', 
+                    '#1a237e', '#283593', '#303f9f', '#3949ab', '#3f51b5', '#5c6bc0', '#7986cb', '#9fa8da', '#c5cae9',
+                    '#0d47a1', '#1565c0', '#1976d2', '#1e88e5', '#2196f3', '#42a5f5', '#64b5f6', '#90caf9', '#bbdefb',
+                    '#006064', '#00838f', '#0097a7', '#00acc1', '#00bcd4', '#26c6da', '#4dd0e1', '#80deea', '#b2ebf2',
+                    '#004d40', '#00695c', '#00796b', '#00897b', '#009688', '#26a69a', '#4db6ac', '#80cbc4', '#b2dfdb',
+                    '#1b5e20', '#2e7d32', '#388e3c', '#43a047', '#4caf50', '#66bb6a', '#81c784', '#a5d6a7', '#c8e6c9',
+                    '#33691e', '#558b2f', '#689f38', '#7cb342', '#8bc34a', '#9ccc65', '#aed581', '#c5e1a5', '#dcedc8',
+                    '#f57f17', '#f9a825', '#f9a825', '#fdd835', '#ffeb3b', '#ffee58', '#fff176', '#fff59d', '#fff9c4',
+                    '#ff6f00', '#ff8f00', '#ffa000', '#ffb300', '#ffc107', '#ffca28', '#ffd54f', '#ffe082', '#ffecb3',
+                    '#e65100', '#ef6c00', '#f57c00', '#fb8c00', '#ff9800', '#ff9800', '#ffb74d', '#ffcc80', '#ffe0b2',
+                    '#bf360c', '#d84315', '#e64a19', '#f4511e', '#ff5722', '#ff7043', '#ff8a65', '#ffab91', '#ffccbc',
+                    '#3e2723', '#3e2723', '#5d4037', '#6d4c41', '#795548', '#8d6e63', '#a1887f', '#bcaaa4', '#d7ccc8' ]; 
+	this.ncol = colObj.ncol;
+	this.nrow = colObj.nrow;
+	this.parent = colObj.parent;
+	this.acon = colObj.acon;
+  }
+  aconClickFun(e) {
+	alert('icon clicked!');
+  }
+
+  gridColFun(id) {	
+	alert('col clicked!' + id);
+  }
+
+
+  init() {
+console.log('col arr: ' + this.colorArray.length);
+	let parEl = document.getElementById(this.parent);
+	let divEl = document.createElement('div');
+	divEl.id = 'colCont';
+	let pEl = document.createElement('p');
+	pEl.textContent = 'pick color';
+	divEl.append(pEl);
+	let divColEl = document.createElement('div');
+	divColEl.id = 'colpick';
+	divEl.append(divColEl);
+	this.divColEl = divColEl;
+	parEl.append(divEl);
+	let aconEl = document.getElementById(this.acon);
+	aconEl.addEventListener('click', (event) => {this.aconClickFun(event)});
+  }
+
+  cellClickFun(e, arg) {
+	e.preventDefault();
+	console.log('click cell: ' + arg + ':' + this.colorArray[arg]);
+	let agEl= document.getElementById('acong');
+	agEl.style.fill = this.colorArray[arg];
+	agEl.style.stroke = this.colorArray[arg];
+}
+
+  addDivCols() {
+//    let colpal = document.getElementById('colpick');
+//	const cellclick_handler = (event, arg) => this.cellClickFun(event, arg);
+	let colpal = this.divColEl;
+    for (let col=0; col<this.ncol; col++) {
+        let divEl = document.createElement('div');
+        divEl.setAttribute('id','c' + (col + 1));
+//        let pEl =document.createElement('p');
+//        pEl.textContent = divEl.id;
+//        divEl.append(pEl);
+        const colClass = divEl.classList;
+        colClass.add('divcol');
+
+		for (let row=0; row<this.nrow; row++) {
+			let cellEl = document.createElement('div');
+        	cellEl.setAttribute('id',(row+1) + ':' + (col + 1));
+			cellEl.addEventListener('click', (event) => {this.cellClickFun(event, col*this.nrow + row)});
+//        	let pcEl =document.createElement('p');
+//        	pcEl.textContent = cellEl.id;
+			cellEl.style.backgroundColor = this.colorArray[col*this.nrow + row]
+//        	cellEl.append(pcEl);
+        	const rowClass = cellEl.classList;
+        	rowClass.add('cell');
+        	divEl.append(cellEl);
+		}
+        colpal.append(divEl);
+    }
+ }
+}
+window.onload = function(){
+	let colPickObj = {
+		nrow: 9,
+		ncol: 15,
+		parent: 'doc',
+		acon: 'acon',
+	};
+	let colPick = new colorPicker(colPickObj);
+	colPick.init();
+	colPick.addDivCols();
+};
+ </script>
+</body>
+</html>
