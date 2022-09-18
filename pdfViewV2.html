@@ -51,9 +51,10 @@
 
 .navinp {
 	width: 70px;
-	margin: 0 50px 0 50px;
+	margin: 0 20px 0 20px;
  	text-align:right;
 }
+
 #doctitle {
   padding-left: 300px;
   margin: 20px 0 20px 0;
@@ -106,31 +107,72 @@ class pdfViewer {
 	navDiv.append(pgCtl);	
 
 	let butprev = document.createElement('button');
-	butprev.id = 'go_previous';
+	butprev.id = 'butprev';
 	butprev.className = 'navbut';
 	butprev.textContent = '<';
-	pgCtl.append(butprev);
-
+    butprev.addEventListener('click', (e) => {
+      if(this.pdf == null|| this.dispPage == 1) return;
+      this.dispPage -= 1;
+      document.getElementById('disp_page').value = this.dispPage;
+      this.render(this.dispPage);
+    });
 
 	let pginp = document.createElement('input');
 	pginp.type = 'number';
-	pginp.id = 'current_page';
+	pginp.id = 'disp_page';
 	pginp.className = 'navinp';
-	pginp.value = '1';
-	pgCtl.append(pginp);
+	pginp.value = 1;
+	this.pginp = pginp;
+	pginp.addEventListener('change', (event) => {
+      if(this.pdf == null) return;
+	  let x = parseInt(pginp.value);
+//	  console.log('x: ' + x + ' pages: ' + this.numPages);
+	  if ((x>0) && (x<= this.numPages)) {
+		this.dispPage = x;
+	  } else {
+	    if (x > this.numPages) {
+		  this.dispPage = this.numPages;
+	    }
+	    if (x < 1) { 
+		  this.dispPage = 1;
+	    }
+	  }	  
+      document.getElementById('disp_page').value = this.dispPage;
+//	console.log('dpg: ' + this.dispPage);
+      this.render(this.dispPage);
+    });
 	
 	let butlast = document.createElement('button');
-	butlast.id = 'go_last';
+	butlast.id = 'butlast';
 	butlast.className = 'navbut';
-	butlast.textContent = '>>';
-	pgCtl.append(butlast);
+    butlast.addEventListener('click', (e) => {
+      if(this.pdf == null || this.dispPage > this.numPages) {
+	     butlast.textContent = '>>';
+         return;
+      }
+      this.dispPage = this.numPages;
+      document.getElementById('disp_page').value = this.dispPage;
+	  butlast.textContent = '>> ' + this.numPages;
+      this.render(this.dispPage);
+    });
 	
 
 	let butnext = document.createElement('button');
-	butnext.id = 'go_next';
+	butnext.id = 'butnext';
 	butnext.className = 'navbut';
 	butnext.textContent = '>';
+    butnext.addEventListener('click', (e) => {
+      if(this.pdf == null || this.dispPage >= this.numPages)
+      return;
+      this.dispPage += 1;
+      document.getElementById('disp_page').value = this.dispPage;
+      this.render(this.dispPage);
+    });
+
+	pgCtl.append(butprev);
+	pgCtl.append(pginp);
 	pgCtl.append(butnext);
+	pgCtl.append(butlast);
 
 
 	let zoomCtl = document.createElement('div');	
@@ -145,20 +187,38 @@ class pdfViewer {
 	zin.id = 'zoom-in';
 	zin.className = 'navbut';
 	zin.textContent = '+';
+    zin.addEventListener('click', (e) => {
+      if(this.pdf == null || this.zoom > 2.5)
+      return;
+	  this.zoom += 0.1;
+	  let x = Number.parseFloat(this.zoom).toFixed(1);	
+	  document.getElementById('zlev').value = x;
+      this.render(this.dispPage);
+	});
 	zoomCtl.append(zin);
 
 	let zlev = document.createElement('input');
 	zlev.type = 'number';
 	zlev.className = 'navinp';
 	zlev.id = 'zlev';
-	zlev.value = '1.0';
+	let x = Number.parseFloat(this.zoom).toFixed(1);	
+	zlev.value = x;
 	zoomCtl.append(zlev);
-
+	this.zlev = zlev;
 
 	let zout = document.createElement('button');
 	zout.id = 'zoom-out';
 	zout.className = 'navbut';
 	zout.textContent = '-';
+    zout.addEventListener('click', (e) => {
+      if(this.pdf == null || this.zoom < 0.5)
+      return;
+	  this.zoom -= 0.1;
+	  let x = Number.parseFloat(this.zoom).toFixed(1);	
+	  document.getElementById('zlev').value = x;
+      this.render(this.dispPage);
+});
+
 	zoomCtl.append(zout);
 
 	let pdfviewdiv = document.createElement('div');
@@ -166,107 +226,67 @@ class pdfViewer {
 	pdfDiv.append(pdfviewdiv);	
 	
 	let pdfcanvas = document.createElement('canvas');
-	pdfcanvas.id = 'the-canvas';
+	pdfcanvas.id = 'pdfCanvas';
 	pdfcanvas.style.border = 'thin solid black';
 	pdfcanvas.direction = 'ltr';
 	pdfviewdiv.append(pdfcanvas);	
  }
 
-}
-/*
-  const loadingTask = pdfjsLib.getDocument(url);
+ load(url) {
+   const loadingTask = pdfjsLib.getDocument(url);
 
-  (async () => {
-    const pdf = await loadingTask.promise;
-	pdfState.pdf = pdf;
+   (async () => {
+     this.pdf = await loadingTask.promise;
+	 this.numPages = this.pdf.numPages;
 
-	pdfState.numPages = pdf.numPages;
-
-	document.getElementById('go_count').textContent= 'total pages: ' + pdfState.numPages
-	document.getElementById('zoom_lev').textContent= 'zoom: ' + pdfState.zoom
+	 document.getElementById('butlast').textContent = '>> ' + this.numPages;
+	 document.getElementById('zlev').textContent= this.zoom;
 //	pdf.getMetadata().then(function(stuff) {
 //		console.log(JSON.stringify(stuff,null,2))
 //	});
-    render();
-  })();
-
-async function render() {
-    //
-    // Fetch the first page
-    //
-	pdf = pdfState.pdf;
-    const page = await pdf.getPage(pdfState.dispPage);
-    const scale = pdfState.zoom;
-    const viewport = page.getViewport({ scale });
-    // Support HiDPI-screens.
-    const outputScale = window.devicePixelRatio || 1;
-
-    //
-    // Prepare canvas using PDF page dimensions
-    //
-    const canvas = document.getElementById("pdfCanvas");
-    const context = canvas.getContext("2d");
-
-    canvas.width = Math.floor(viewport.width * outputScale);
-    canvas.height = Math.floor(viewport.height * outputScale);
-    canvas.style.width = Math.floor(viewport.width) + "px";
-    canvas.style.height = Math.floor(viewport.height) + "px";
-
-    const transform = outputScale !== 1 
-      ? [outputScale, 0, 0, outputScale, 0, 0] 
-      : null;
-
-    //
-    // Render PDF page into canvas context
-    //
-    const renderContext = {
-      canvasContext: context,
-      transform,
-      viewport,
-    };
-    page.render(renderContext);
+     this.render(this.dispPage);
+	})();
 }
 
-document.getElementById('go_previous').addEventListener('click', (e) => {
-    if(pdfState.pdf == null|| pdfState.dispPage == 1)
-    return;
+  render(dPgNum) {
+	if ((dPgNum > this.numPages) || (dPgNum < 1)) return; 
+//	console.log('render pg: ' + dPgNum);
+	let pdf = this.pdf;
+	if (pdf == null) return;
+    (async () => {
+		const page = await pdf.getPage(dPgNum);
+    	const scale = this.zoom;
+    	const viewport = page.getViewport({ scale });
+    // Support HiDPI-screens.
+	    const outputScale = window.devicePixelRatio || 1;
 
-    pdfState.dispPage -= 1;
-    document.getElementById("current_page").value = pdfState.dispPage;
-    render();
-});
+	    const canvas = document.getElementById("pdfCanvas");
+    	const context = canvas.getContext("2d");
 
-document.getElementById('go_next')
-    .addEventListener('click', (e) => {
-    if(pdfState.pdf == null || pdfState.dispPage > pdfState.numPages)
-    return;
+    	canvas.width = Math.floor(viewport.width * outputScale);
+    	canvas.height = Math.floor(viewport.height * outputScale);
+    	canvas.style.width = Math.floor(viewport.width) + "px";
+    	canvas.style.height = Math.floor(viewport.height) + "px";
 
-    pdfState.dispPage += 1;
-    document.getElementById("current_page").value = pdfState.dispPage;
-    render();
-});
+    	const transform = outputScale !== 1 
+      		? [outputScale, 0, 0, outputScale, 0, 0] 
+      	: null;
 
-document.getElementById('zoom_in')
-    .addEventListener('click', (e) => {
-    if(pdfState.pdf == null || pdfState.zoom > 2.5)
-    return;
+	    const renderContext = {
+    	  	canvasContext: context,
+      		transform,
+      		viewport,
+    	};
+    	page.render(renderContext);
+	})();
+  }
+} // end of class
 
-	pdfState.zoom += 0.1;
-	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
-	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
-    render();
-});
 
-document.getElementById('zoom_out')
-    .addEventListener('click', (e) => {
-    if(pdfState.pdf == null || pdfState.zoom < 0.5)
-    return;
+/*
 
-	pdfState.zoom -= 0.1;
-	let x = Number.parseFloat(pdfState.zoom).toFixed(1);	
-	document.getElementById('zoom_lev').textContent= 'zoom: ' + x;
-    render();
-});
+
+
 */
 
  class htmlPage {
@@ -319,6 +339,7 @@ window.onload = function() {
   catch(err) {
 	console.log('error: ' + err);
   }
+	pdfView.load(url);
 }
 
  </script>
