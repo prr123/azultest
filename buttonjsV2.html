@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="blog about software writing and using">
+  <meta name="keywords" content="Go">
+  <meta name="author" content="prr">
+  <meta name="date" content="1\3\2021">
+  <meta  name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Html Index</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri;
+  list-style: none;
+  text-decoration:none;
+  font-size: 20pt;
+}
+
+</style>
+</head>
+<body>
+</body>
+<script>
+  class htmlPage {
+	constructor () {
+	}		
+
+	init(pgObj) {	  
+
+	  let divMain = document.createElement('div');
+	  this.divMain = divMain;
+      Object.assign(divMain,pgObj.mainDiv);
+      Object.assign(divMain.style,pgObj.mainDiv.style);
+	  document.body.append(divMain);
+	  
+	  let header = document.createElement('header');
+      Object.assign(header,pgObj.header);
+      Object.assign(header.style,pgObj.header.style);
+	  this.header = header;
+//	  this.addHead('header',header);
+	  divMain.append(header);
+
+	  let doc = document.createElement('section');
+      Object.assign(doc,pgObj.section);
+      Object.assign(doc.style,pgObj.section.style);
+	  this.doc = doc;
+//	  this.addHead('docmain',doc);
+	  divMain.append(doc);
+
+	  let footer = document.createElement('footer');
+      Object.assign(footer,pgObj.footer);
+      Object.assign(footer.style,pgObj.footer.style);
+	  this.footer = footer;
+//	  this.addHead('footer',footer);
+	  divMain.append(footer);
+	}
+
+	addHead(hdObj) {
+	  let hdEl = document.createElement('h3');
+      Object.assign(hdEl,hdObj);
+	  if (hdObj.style != null) {Object.assign(hdEl.style,hdObj.style)};
+	  hdObj.parent.append(hdEl);
+	}
+	addElement(elObj) {
+//		console.log('elObj: ', + elObj);
+		let el = document.createElement(elObj.typ);
+      	Object.assign(el.style,elObj.style);
+		elObj.parent.append(el);
+		return el;
+	}
+
+  }
+
+  class htmlWidget {
+	constructor () {
+	}		
+
+	button(butObj) {
+		let butEl = document.createElement('button');
+        Object.assign(butEl,butObj);
+        Object.assign(butEl.style,butObj.style);
+//		butEl.style = butObj.style;
+		butEl.state = true;
+		butEl.hovAtts = Object.keys(butObj.hovStyl);
+    	butEl.addEventListener('mouseover',(event)=>{butElHov(event);});
+    	butEl.addEventListener('mouseleave',(event)=>{butElLeave(event, butEl);});
+    	butEl.addEventListener('click',(event)=>{butElClick(event);});		
+//    	butEl.addEventListener('click',(event)=>{butObj.click(event,butObj.p1);});
+		butObj.parent.append(butEl);
+	  	return butEl;
+
+	    function  butElHov(e) {
+//  console.log('butEl hovering');
+			for (let i=0; i<e.target.hovAtts.length; i++) {
+				let prop = e.target.hovAtts[i];
+//				console.log('keys: ' + prop + '\n');
+				e.target.style[prop] = butObj.hovStyl[prop];
+			}
+        	e.target.style.cursor = 'pointer';
+    	}
+
+    	function  butElLeave(e, el) {
+//  console.log('butEl leaving');
+//        Object.assign(el.style,butObj.style);
+
+			for (let i=0; i<e.target.hovAtts.length; i++) {
+				let prop = e.target.hovAtts[i];
+		  		if (e.target.state) {
+		  			e.target.style[prop] = butObj.style[prop];
+		  		} else {
+					e.target.style[prop] = butObj.altStyl[prop];
+	 	  		}
+			}
+        	el.style.cursor = 'default';
+
+    	}
+	
+    	function  butElClick(e) {
+			e.target.state = !e.target.state;
+			for (let i=0; i<e.target.hovAtts.length; i++) {
+				let prop = e.target.hovAtts[i];
+				if (e.target.state) {
+					e.target.style[prop] = butObj.style[prop];
+				} else {
+					e.target.style[prop] = butObj.altStyl[prop];			
+				};
+			}
+    	}
+	};
+
+  }
+
+  window.onload = (event) => {
+	let azul = new htmlPage;
+	let pageObj = {
+		mainDiv: {
+			style: {
+				width: 'calc(100% - 300px)',
+				border: '1px solid blue',
+				minHeight: '300px',
+			},
+			id: 'divMain',
+		},
+		header: {
+			style: {
+				height: '100px',
+				margin: '10px',
+				border: '1px solid DeepPink',
+				position: 'relative',
+			},
+			id: 'header',
+			className: 'pagSections',
+		},
+		section: {
+			style: {
+				minHeight: '500px',
+				margin: '10px',
+				border: '1px solid Tomato',
+				position: 'relative',
+			},
+			id: 'docmain',
+			className: 'pagSections',			
+		},
+		footer: {
+			style: {
+				height: '100px',
+				margin: '10px',
+				border: '1px solid green',
+				position: 'relative',
+			},
+			id: 'footer',
+			className: 'pagSections',
+		},
+	}
+
+	let hdStyl = {
+		color: 'MediumPurple',
+		margin: 'auto',
+		textAlign: 'center',
+		padding: '0.5em',
+	};
+
+	azul.init(pageObj);
+	let hdObj = {
+		style: hdStyl,
+		parent: azul.header,
+		id: 'header',
+		className: 'doch3',
+		textContent: 'header title',			
+	}
+	azul.addHead(hdObj);
+	let hd2Obj = {
+		style: hdStyl,
+		parent: azul.doc,
+		id: 'docmain',
+		className: 'doch3',
+		textContent: 'docmain',			
+	}
+	azul.addHead(hd2Obj);
+	let hdfooterObj = {
+		style: hdStyl,
+		parent: azul.footer,
+		id: 'footer',
+		className: 'doch3',
+		textContent: 'footer',			
+	}
+	azul.addHead(hdfooterObj);
+	let elObj = {	
+		style: {
+			position: 'relative',
+			minHeight: '200px',
+			margin: '10px',
+			border: '1px solid green',
+		},
+		parent: azul.doc,
+		typ: 'div',
+	};
+	let ndiv = azul.addElement(elObj);
+
+	let butObj = {
+		style: {
+    		width: '300px',
+    		height: '120px',
+			position: 'absolute',
+			top: '50px',
+			left: '50px',
+    		backgroundColor: 'pink',
+			color: 'brown',
+    		fontSize: '24pt',
+    		padding: '10px',
+       		borderRadius: '25px',
+    		border: '1px solid red',
+		},
+		hovStyl: {
+    		backgroundColor: 'green',
+			color: 'white',
+		},
+		altStyl: {
+    		backgroundColor: 'purple',
+		},
+		id: 'butA',
+		className: 'butClass',
+		textContent: 'button A',
+		parent: ndiv,
+		p1: 'hello',
+		click: function(event, p1) {
+			console.log('p1: ' + p1);
+		}
+	}
+
+	let butBObj = {
+		style: {
+    		width: '300px',
+    		height: '120px',
+			position: 'absolute',
+			top: '50px',
+			left: '400px',
+    		backgroundColor: 'lightBlue',
+			color: 'brown',
+    		fontSize: '24pt',
+    		padding: '10px',
+       		borderRadius: '25px',
+    		border: '1px solid blue',
+		},
+		hovStyl: {
+    		backgroundColor: 'lightGreen',
+		},
+		altStyl: {
+    		backgroundColor: 'purple',
+		},
+		id: 'butA',
+		className: 'butClass',
+		textContent: 'button B',
+		parent: ndiv,
+		p1: 'hello',
+		click: function(event, p1) {
+			console.log('p1: ' + p1);
+		},
+	}
+
+	let wid = new htmlWidget;
+	wid.button(butObj);
+
+	let butB = new htmlWidget;
+	butB.button(butBObj);
+
+
+}
+ </script>
+</html>
