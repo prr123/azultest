@@ -1,5 +1,7 @@
 # azullib.js
 
+## Overview
+
 A plain javascript library that provides widgets to create web pages.
 
 widgets: 
@@ -11,18 +13,22 @@ widgets:
 - table
 - tabbed files
 
-# htmlPage
+## Usage
 
-# input
+## Widget Description
 
-# select
+### htmlPage
+
+### input
+
+### select
  
-# button
+### button
 
-# icon
+### icon
 
-# table
+### table
 
-# tabbed files
+### tabbed files
 
-
+## Examples
