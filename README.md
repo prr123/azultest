@@ -1,4 +1,4 @@
-# azullib.js
+# azulLib.js
 
 ## Overview
 
