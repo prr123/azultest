@@ -38,7 +38,7 @@ class HtmlPage {
         let el = document.createElement(elObj.typ);
         Object.assign(el,elObj);
         Object.assign(el.style,elObj.style);
-        elObj.parent.append(el);
+        elObj.parent.appendChild(el);
         return el;
     }
 
@@ -106,7 +106,7 @@ class HtmlPage {
         butEl.addEventListener('mouseleave',(event)=>{butElLeave(event, butEl);});
         butEl.addEventListener('click',(event)=>{butElClick(event);});
 //      butEl.addEventListener('click',(event)=>{butObj.click(event,butObj.p1);});
-        butObj.parent.append(butEl);
+        butObj.parent.appendChild(butEl);
         return butEl;
 
         function  butElHov(e) {
@@ -158,19 +158,19 @@ class HtmlPage {
         inpEl.addEventListener('click',(event) => {inpClickFun(event)});
         inpEl.addEventListener('keydown',(event) => {keyDownFun(event)});
         inpEl.addEventListener('keyup',(event) => {keyUpFun(event)});
-        inpObj.parent.append(inpEl);
+        inpObj.parent.appendChild(inpEl);
         return inpEl;
 
         function inpClickFun(e) {
             e.preventDefault();
-            console.log('input click: ' + e.target.value);
+//            console.log('input click: ' + e.target.value);
         }
 
         function keyUpFun(e) {
             e.preventDefault();
             console.log('key up: '+ e.key);
             if (e.key == 'Enter') {
-                console.log('key enter: ' + e.target.value);
+//                console.log('key enter: ' + e.target.value);
             }
         }
 
@@ -178,7 +178,7 @@ class HtmlPage {
             let key = e.key;
             let el = e.target;
             let ctrlkey = e.ctrlKey;
-      console.log('key down1: ' + key + ' control: ' + ctrlkey );
+//      console.log('key down1: ' + key + ' control: ' + ctrlkey );
 
             switch (key) {
             case "ArrowLeft":
@@ -193,9 +193,9 @@ class HtmlPage {
             case "ArrowUp":
         // Up pressed
                 if (ctrlkey) {
-                    console.log('cntl key up');
+//                    console.log('cntl key up');
                 }
-                console.log('key up');
+//                console.log('key up');
                 break;
             case "ArrowDown":
         // Down pressed
@@ -225,20 +225,20 @@ class HtmlPage {
         inpSelEl.addEventListener('mouseup',(event) => {inpSelMup(event)});
 //        inpSelEl.addEventListener('keydown',(event) => {inpSelKeyDown(event)});
 //        inpSelEl.addEventListener('keyup',(event) => {inpSelKeyUp(event)});
-        inpSelObj.parent.append(inpSelEl);
+        inpSelObj.parent.appendChild(inpSelEl);
 
 		return inpSelEl;
 
         function inpSelMup(e) {
             e.preventDefault();
-            console.log('inpSel mouse up: ' + e.target.value);
+//            console.log('inpSel mouse up: ' + e.target.value);
         }
 
         function inpSelKeyUp(e) {
             e.preventDefault();
             console.log('inpSel key up: '+ e.key);
             if (e.key == 'Enter') {
-                console.log('key enter: ' + e.target.value);
+//                console.log('key enter: ' + e.target.value);
             }
         }
 
@@ -246,7 +246,7 @@ class HtmlPage {
             let key = e.key;
             let el = e.target;
             let ctrlkey = e.ctrlKey;
-      console.log('inpSel key down: ' + key + ' control: ' + ctrlkey );
+ //     console.log('inpSel key down: ' + key + ' control: ' + ctrlkey );
 
             switch (key) {
             case "ArrowLeft":
@@ -261,9 +261,9 @@ class HtmlPage {
             case "ArrowUp":
         // Up pressed
                 if (ctrlkey) {
-                    console.log('cntl key up');
+//                    console.log('cntl key up');
                 }
-                console.log('key up');
+//                console.log('key up');
                 break;
             case "ArrowDown":
         // Down pressed
@@ -287,7 +287,7 @@ class svgIcon {
     this.size = size;
   }
 
-  creIcon(iconObj) {
+  createIcon(iconObj) {
     let svgEl = document.createElementNS(this.svgNS, 'svg');
     if (iconObj['size'] === undefined) {
         svgEl.setAttribute('width', this.size);
@@ -298,9 +298,21 @@ class svgIcon {
     }
     svgEl.setAttribute('viewBox', '0 0 100 100');
     svgEl.setAttribute('version', '1.1');
+
+    Object.assign(svgEl,iconObj);
     Object.assign(svgEl.style,iconObj.svgStyle);
 
+    svgEl.addEventListener('mouseover',(event)=>{svgElHov(event);});
+    svgEl.addEventListener('mouseleave',(event)=>{svgElHovLeave(event, svgEl);});
+    svgEl.state = false;
+
+
     let pathEl = document.createElementNS(this.svgNS,'path');
+    pathEl.style.strokeWidth = '10px';
+    pathEl.style.strokeLineCap = 'round';
+    pathEl.style.strokeLineJoin = 'miter';
+    pathEl.style.stroke = '#000000';
+    pathEl.style.fill = 'none';
     Object.assign(pathEl.style,iconObj.style);
     switch (iconObj.iconType) {
         case 'login':
@@ -315,18 +327,15 @@ class svgIcon {
             break;
         case 'exit':
             pathEl.setAttribute('d', 'm 5,5 90,90 m -90,0 90, -90');
+			svgEl.addEventListener('click',(event)=>{svgXClick(event);});
             break;
         default:
           throw 'unknown icon: ' + iconObj.icon;
     }
     let hovKeys = Object.keys(iconObj.hovStyle);
 
-    svgEl.addEventListener('mouseover',(event)=>{svgElHov(event);});
-    svgEl.addEventListener('mouseleave',(event)=>{svgElHovLeave(event, svgEl);});
-    svgEl.addEventListener('click',(event)=>{svgElClick(event);});
-    svgEl.state = false;
-    svgEl.append(pathEl);
-    iconObj.parent.append(svgEl);
+    svgEl.appendChild(pathEl);
+    iconObj.parent.appendChild(svgEl);
 
     function svgElHov(e) {
         if (e.target.state) { return}
@@ -337,7 +346,7 @@ class svgIcon {
             pathEl.style[prop] = iconObj.hovStyle[prop];
         }
         e.target.state = true;
-        console.log('hover');
+//        console.log('hover');
     }
 
     function svgElHovLeave(e, el) {
@@ -348,17 +357,84 @@ class svgIcon {
             pathEl.style[prop] = iconObj.style[prop];
         }
         el.state = false;
-        console.log('leaving');
+//        console.log('leaving');
     }
 
     function svgElClick(e) {
         e.preventDefault();
-        console.log('click');
+//        console.log('click');
+    }
+
+    function svgXClick(e) {
+        e.preventDefault();
+        console.log('X click');
     }
 
   }
 
 } //svg Icons
+
+class svgWidget {
+  constructor() {
+    this.svgNS = "http://www.w3.org/2000/svg";
+  }
+
+	createSvg(svgObj) {
+		let svgtyp = svgObj.typ;
+    	let svgEl = document.createElementNS(this.svgNS, svgtyp);
+		svgEl.typ = svgtyp;
+//		if (svgtyp == 'svg') && () {svgEl.setAttribute('version', '1.1');}
+
+		let keys = Object.keys(svgObj);
+		for (let i=0; i< keys.length; i++){
+			let key = keys[i];
+			let val = svgObj[key];
+			svgEl.setAttribute(key, val);
+		}
+
+    	Object.assign(svgEl.style,svgObj.style);
+
+		if (svgObj.hasOwnProperty('parent')) {svgObj.parent.appendChild(svgEl);}
+		this.svgEl = svgEl;
+
+//		svgEl.addEventListener('mouseenter',(event)=>{svgElMoEnter(event);});
+//		svgEl.addEventListener('mouseleave',(event)=>{svgElMoLeave(event, svgEl);});
+		svgEl.addEventListener('mouseup',(event)=>{this.svgElMoUp(event);});
+
+
+		return svgEl;
+	}
+
+/*
+    function svgElMoEnter(e) {
+        if (e.target.state) { return}
+        e.preventDefault();
+        e.target.style.cursor = 'pointer';
+        for (let i=0; i<hovKeys.length; i++) {
+            let prop = hovKeys[i];
+            pathEl.style[prop] = iconObj.hovStyle[prop];
+        }
+        e.target.state = true;
+//        console.log('hover');
+    }
+
+    function svgElMoLeave(e, el) {
+        e.preventDefault();
+        e.target.style.cursor = 'default';
+        for (let i=0; i<hovKeys.length; i++) {
+            let prop = hovKeys[i];
+            pathEl.style[prop] = iconObj.style[prop];
+        }
+        el.state = false;
+//        console.log('leaving');
+    }
+*/
+   	svgElMoUp(e) {
+        e.preventDefault();
+        console.log('mouse up:' + e.button + ' from ' + e.target);
+    }
+
+} //svgWidget
 
 class tableWidget {
 
@@ -452,7 +528,7 @@ class tableWidget {
         let cel = e.target;
         let icol = cel.cellIndex;
         let irow = cel.parentNode.rowIndex;
-        console.log('click' + cel + ' icol: ' + icol + ' irow: ' + irow );
+//        console.log('click' + cel + ' icol: ' + icol + ' irow: ' + irow );
         cel.focus();
     }
 
@@ -508,24 +584,25 @@ class tableWidget {
 		this.active = 0;
 	}
 
-  	creSvgTab(tab, i) {
+  	creSvgTab(tab) {
 
    		const svgNS = "http://www.w3.org/2000/svg";
     	let svgEl = document.createElementNS(svgNS, 'svg');
-        svgEl.setAttribute('width', '150');
+        svgEl.setAttribute('width', '160');
         svgEl.setAttribute('height', '50');
 
-    	svgEl.setAttribute('viewBox', '0 0 260 70');
+    	svgEl.setAttribute('viewBox', '0 0 160 50');
     	svgEl.setAttribute('version', '1.1');
-
+		svgEl.style.margin = '0 0 -12px 0';
 //    	Object.assign(svgEl.style,iconObj.svgStyle);
 
 		let tabgrpEl = document.createElementNS(svgNS,'g');
+//		tabgrpEl.style.margin = '0 0 -5px 0';
 
     	let tabPathEl = document.createElementNS(svgNS,'path');
 //    	Object.assign(tabpathEl.style,svgObj.style);
 
-	    tabPathEl.setAttribute('d', 'm0 70 50-70h160l50 70z');
+	    tabPathEl.setAttribute('d', 'm0 50 30-50h100l30 50z');
     	tabPathEl.setAttribute('class', 'svgtab');
 		tabPathEl.id = 'tab_' + tab;
     	tabPathEl.style.fill = '#ccc';
@@ -534,8 +611,8 @@ class tableWidget {
     	let tabTextEl = document.createElementNS(svgNS,'text');
 
     	tabTextEl.setAttribute('class', 'svgtext');
-    	tabTextEl.setAttribute('x', '60');
-    	tabTextEl.setAttribute('y', '50');
+    	tabTextEl.setAttribute('x', '50');
+    	tabTextEl.setAttribute('y', '35');
     	tabTextEl.textContent = tab;
     	tabgrpEl.appendChild(tabTextEl);
 
@@ -549,7 +626,7 @@ class tableWidget {
 	}
 
 	tabMoEnter(e) {
-  console.log('mouse enter: ' + this.active);
+//  console.log('mouse enter: ' + this.active);
 		if (e.target!= this.tabEls[this.active]) {
 			let tabPath = e.target.path;
 			tabPath.style.fill = 'aqua';
@@ -561,7 +638,7 @@ class tableWidget {
 
 
   	tabMoLeave(e) {
-  console.log('mouse leave: ' + e.target);
+//  console.log('mouse leave: ' + e.target);
 		if (e.target!= this.tabEls[this.active]) {
 			let tabPath = e.target.path;
         	tabPath.style.fill = '#ccc';
@@ -581,7 +658,7 @@ class tableWidget {
     	navEl.id = 'tabnav';
 
 		Object.assign(navEl.style, tabDivObj.nav.style);
-    	tabGrp.append(navEl);
+    	tabGrp.appendChild(navEl);
 
     	for (let i=0; i< this.tabNum; i++) {
 //  console.log('tab[' + i + ']: ' + tabObj[i]);
@@ -590,7 +667,7 @@ class tableWidget {
 			tabEl.addEventListener
 			this.tabEls.push(tabEl);
         	tabEl.addEventListener('click',(event)=>{this.tabClick(event, i);});
-        	navEl.append(tabEl);
+        	navEl.appendChild(tabEl);
     	}
 
 	    for (let i=0; i< this.tabNum; i++) {
@@ -611,7 +688,7 @@ class tableWidget {
 
         	let pEl= document.createElement('p');
         	pEl.textContent = 'Content: ' + this.tabNames[i];
-        	divEl.append(pEl);
+        	divEl.appendChild(pEl);
 			tabGrp.appendChild(divEl);
     	}
 		tabGrp.parent.appendChild(tabGrp);
@@ -620,7 +697,7 @@ class tableWidget {
 	} //create
 
   	tabClick(e, i) {
-      	console.log('tabclick[' + i + '] active: ' + this.active);
+//      	console.log('tabclick[' + i + '] active: ' + this.active);
 
         	this.tabEls[i].path.style.fill = '#eee';
         	this.tabEls[this.active].path.style.fill = '#ccc';
@@ -630,7 +707,163 @@ class tableWidget {
         	this.active = i;
 	}
 
-
-
-
 } //tabDivs
+
+class menuWidget {
+
+	constructor() {
+
+	}
+
+	create(menuObj) {
+
+		let menuDiv = document.createElement('div');
+
+		Object.assign(menuDiv.style, menuObj.style);
+
+		let menuNav = document.createElement('div');
+		menuNav.id = 'menuNav';
+		let menuNavObj = {
+			style: {
+				minHeight: '50px',
+				border: '1px solid blue',
+			},
+		};
+		Object.assign(menuNav.style, menuNavObj.style);
+
+		let menuTitleStylObj = {
+			display: 'inline',
+			position: 'absolute',
+			padding: '5px',
+		};
+
+		let menuTitle = document.createElement('h3');
+		menuTitle.textContent = 'menu';
+		Object.assign(menuTitle.style, menuTitleStylObj);
+		menuNav.appendChild(menuTitle);
+
+		let iconItem = new svgIcon(32);
+		let iconObj = {
+			id: 'menuX',
+			iconType: 'exit',
+			svgStyle: {
+				cursor: 'default',
+				display: 'inline',
+				position: 'absolute',
+				top: '10px',
+				right: '10px',
+			},
+			style: {
+				color: 'black',
+			},
+			hovStyle: {
+				cursor: 'pointer',
+			},
+			parent: menuNav,
+		};
+		iconItem.createIcon(iconObj);
+		menuDiv.appendChild(menuNav);
+
+		let menuMain = document.createElement('div');
+
+		let menuMainStyl = {
+			border: '1px solid orange',
+			width: '100%',
+			height: '400px',
+		};
+		Object.assign(menuMain.style, menuMainStyl);
+		for (let i=0; i< menuObj.items.length; i++) {
+			let item = document.createElement('p');
+			item.textContent = menuObj.items[i];
+			item.style.padding = '4px';
+			item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
+			item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
+			item.addEventListener('mouseup', (e)=>{menuFun(e,i);});
+			menuMain.appendChild(item);
+		}
+
+		menuDiv.appendChild(menuMain);
+
+		function menuFun(e, i) {
+			console.log('menu item: ' + i);
+
+		}
+		return menuDiv;
+	}
+} // menuWidget
+
+
+class loginWidget {
+
+	constructor() {
+
+	}
+
+	create(loginObj) {
+
+		let loginDiv = document.createElement('div');
+
+		Object.assign(loginDiv.style, loginObj.style);
+
+		let loginNav = document.createElement('div');
+		loginNav.id = 'loginNav';
+		let loginNavObj = {
+			style: {
+				minHeight: '50px',
+				border: '1px solid yellow',
+			},
+		};
+		Object.assign(loginNav.style, loginNavObj.style);
+
+		let loginTitleStylObj = {
+			display: 'inline',
+			position: 'absolute',
+			padding: '5px',
+		};
+
+		let loginTitle = document.createElement('h3');
+		loginTitle.textContent = 'login';
+		Object.assign(loginTitle.style, loginTitleStylObj);
+		loginNav.appendChild(loginTitle);
+
+		let iconItem = new svgIcon(32);
+		let iconObj = {
+			id: 'loginX',
+			iconType: 'exit',
+			svgStyle: {
+				cursor: 'default',
+				display: 'inline',
+				position: 'absolute',
+				top: '10px',
+				right: '10px',
+			},
+			style: {
+				color: 'black',
+			},
+			hovStyle: {
+				cursor: 'pointer',
+			},
+			parent: loginNav,
+		};
+		iconItem.createIcon(iconObj);
+		loginDiv.appendChild(loginNav);
+
+		let loginMain = document.createElement('div');
+
+		let loginMainStyl = {
+			border: '1px solid purple',
+			width: '100%',
+			height: '400px',
+		};
+		Object.assign(loginMain.style, loginMainStyl);
+
+		loginDiv.appendChild(loginMain);
+
+		function loginFun(e, i) {
+			console.log('menu item: ' + i);
+
+		}
+		return loginDiv;
+	}
+
+} //login Widget
