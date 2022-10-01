@@ -329,6 +329,12 @@ class svgIcon {
             pathEl.setAttribute('d', 'm 5,5 90,90 m -90,0 90, -90');
 			svgEl.addEventListener('click',(event)=>{svgXClick(event);});
             break;
+		case 'right':
+			pathEl.setAttribute('d', 'M 5,5 95,50 5,95 Z');
+			break;
+		case 'left':
+			pathEl.setAttribute('d', 'M 95,5 5,50 95,95 Z');
+			break;
         default:
           throw 'unknown icon: ' + iconObj.icon;
     }
@@ -772,16 +778,18 @@ class menuWidget {
 			height: '400px',
 		};
 		Object.assign(menuMain.style, menuMainStyl);
+		const menuList = document.createElement('ul');
 		for (let i=0; i< menuObj.items.length; i++) {
-			let item = document.createElement('p');
+			let item = document.createElement('li');
 			item.textContent = menuObj.items[i];
-			item.style.padding = '4px';
+			item.style.padding = '4px 10px';
 			item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
 			item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
 			item.addEventListener('mouseup', (e)=>{menuFun(e,i);});
-			menuMain.appendChild(item);
+			menuList.appendChild(item);
 		}
 
+		menuMain.appendChild(menuList);
 		menuDiv.appendChild(menuMain);
 
 		function menuFun(e, i) {
