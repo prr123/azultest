@@ -209,6 +209,75 @@ class HtmlPage {
         } // keyfun
     } // input
 
+    labelInp(labInpObj) {
+
+        let labEl = document.createElement('label');
+        Object.assign(labEl,labInpObj);
+        Object.assign(labEl.style,labInpObj.style);
+
+        let inpEl = document.createElement('input');
+
+        Object.assign(inpEl,labInpObj.input);
+        Object.assign(inpEl.style,labInpObj.input.style);
+//        inpEl.addEventListener('input',(event) => {inpFun(event)});
+        inpEl.addEventListener('click',(event) => {inpClickFun(event)});
+        inpEl.addEventListener('keydown',(event) => {keyDownFun(event)});
+        inpEl.addEventListener('keyup',(event) => {keyUpFun(event)});
+
+		labEl.appendChild(inpEl);
+		labEl.inp = inpEl;
+        labInpObj.parent.appendChild(labEl);
+
+        return labEl;
+
+        function inpClickFun(e) {
+            e.preventDefault();
+//            console.log('input click: ' + e.target.value);
+        }
+
+        function keyUpFun(e) {
+            e.preventDefault();
+            console.log('key up: '+ e.key);
+            if (e.key == 'Enter') {
+//                console.log('key enter: ' + e.target.value);
+            }
+        }
+
+        function keyDownFun(e) {
+            let key = e.key;
+            let el = e.target;
+            let ctrlkey = e.ctrlKey;
+//      console.log('key down1: ' + key + ' control: ' + ctrlkey );
+
+            switch (key) {
+            case "ArrowLeft":
+                if (ctrlkey) {
+                }
+                break;
+            case "ArrowRight":
+        // Right pressed
+                if (ctrlkey) {
+                }
+                break;
+            case "ArrowUp":
+        // Up pressed
+                if (ctrlkey) {
+//                    console.log('cntl key up');
+                }
+//                console.log('key up');
+                break;
+            case "ArrowDown":
+        // Down pressed
+                if (ctrlkey) {
+                }
+                break;
+            default:
+                return;
+            }
+
+        } // keyfun
+    } // labinp
+
 
 	inpsel(inpSelObj) {
         let inpSelEl = document.createElement('select');
@@ -334,6 +403,9 @@ class svgIcon {
 			break;
 		case 'left':
 			pathEl.setAttribute('d', 'M 95,5 5,50 95,95 Z');
+			break;
+		case 'eye':
+			pathEl.setAttribute('d', 'M 0,40 A 100,100 0 0 1 100,40 m 0, 20 A 100,100 0 0 1 0,60 M 38,50 A 12,12 0 0 1 62,50 A 12,12 0 0 1 38,50');
 			break;
         default:
           throw 'unknown icon: ' + iconObj.icon;
@@ -857,6 +929,7 @@ class loginWidget {
 		loginDiv.appendChild(loginNav);
 
 		let loginMain = document.createElement('div');
+		loginMain.id = 'loginMain';
 
 		let loginMainStyl = {
 			border: '1px solid purple',
@@ -864,6 +937,50 @@ class loginWidget {
 			height: '400px',
 		};
 		Object.assign(loginMain.style, loginMainStyl);
+
+		let nameInpObj = {
+			parent: loginMain,
+			id: 'nameInp',
+			textContent: 'Name',
+			style: { width: '100px',},
+			input: {
+				style: {
+
+				},
+
+			},
+
+		};
+
+		let pwdInpObj = {
+			parent: loginMain,
+			textContent: 'Password:',
+			id: 'pwdInp',
+			style: { width: '100px',},
+			input: {
+				style: {
+
+				},
+
+			},
+
+		};
+
+		let submitObj = {
+			parent: loginMain,
+			textContent: 'login',
+			style: {},
+			hovStyl: {},
+		};
+
+		//name
+		const labelWid = new htmlWidget;
+
+		let nameInp = labelWid.labelInp(nameInpObj);
+
+		let pwdInp = labelWid.labelInp(pwdInpObj);
+
+		let submitBut = labelWid.button(submitObj);
 
 		loginDiv.appendChild(loginMain);
 
