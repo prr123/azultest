@@ -15,6 +15,44 @@ class HtmlPage {
       Object.assign(header,pgObj.header);
       Object.assign(header.style,pgObj.header.style);
       this.header = header;
+
+        let iconWid = new svgIcon(48);
+
+		let iconObj = {
+			iconType: 'menu',
+			id: 'menu',
+			parent: header,
+			style: {padding: '20px 0 0 20px',},
+			hovStyle: {},
+		};
+        const menuIcon = iconWid.createIcon(iconObj);
+
+//        let iconDiv = document.createElement('div');
+		let iconDivObj = {
+			id: 'iconDiv',
+			typ: 'div',
+		  	style: {
+				display: 'inline',
+			},
+		}
+
+		let iconDiv = this.addElement(iconDivObj);
+
+		let iconRightObj = {
+			iconType: 'login',
+			id: 'loginIcon',
+			parent: iconDiv,
+			style: {padding: '20px 20px 0 0',},
+			hovStyle: {},
+		};
+
+        let loginIcon = iconWid.createIcon(iconRightObj);
+
+		iconRightObj.iconType = 'home';
+		iconRightObj.id = 'homeIcon';
+        let homeIcon = iconWid.createIcon(iconRightObj);
+
+	  header.appendChild(iconDiv);
 //    this.addHead('header',header);
       divMain.appendChild(header);
 
@@ -38,7 +76,7 @@ class HtmlPage {
         let el = document.createElement(elObj.typ);
         Object.assign(el,elObj);
         Object.assign(el.style,elObj.style);
-        elObj.parent.appendChild(el);
+		if (elObj.hasOwnProperty('parent')){elObj.parent.appendChild(el);}
         return el;
     }
 
@@ -374,7 +412,7 @@ class svgIcon {
     svgEl.addEventListener('mouseover',(event)=>{svgElHov(event);});
     svgEl.addEventListener('mouseleave',(event)=>{svgElHovLeave(event, svgEl);});
     svgEl.state = false;
-
+	svgEl.iconType = iconObj.iconType;
 
     let pathEl = document.createElementNS(this.svgNS,'path');
     pathEl.style.strokeWidth = '10px';
@@ -390,13 +428,14 @@ class svgIcon {
             break;
         case 'menu':
             pathEl.setAttribute('d', 'M 5,20 h 90 M 5,50 h 90 M 5,80 h 90');
+			svgEl.addEventListener('click',(event)=>{svgMenuClick(event);});
             break;
         case 'home':
             pathEl.setAttribute('d', 'M 15,40 V 95 H 85 V 40 M 5,44 50,15 95,44');
             break;
         case 'exit':
             pathEl.setAttribute('d', 'm 5,5 90,90 m -90,0 90, -90');
-			svgEl.addEventListener('click',(event)=>{svgXClick(event);});
+			svgEl.addEventListener('click',(event)=>{svgXClick(event, svgEl.exitEl);});
             break;
 		case 'right':
 			pathEl.setAttribute('d', 'M 5,5 95,50 5,95 Z');
@@ -440,12 +479,20 @@ class svgIcon {
 
     function svgElClick(e) {
         e.preventDefault();
-//        console.log('click');
+        console.log('click: ' + this.iconType);
     }
 
-    function svgXClick(e) {
+    function svgMenuClick(e) {
         e.preventDefault();
-        console.log('X click');
+        console.log('menu click: ');
+		const menu = document.getElementById('menuDiv');
+		menu.style.display = 'block';
+    }
+
+    function svgXClick(e, exitEl) {
+        e.preventDefault();
+//        console.log('X click');
+		exitEl.style.display = 'none';
     }
 
   }
@@ -797,6 +844,7 @@ class menuWidget {
 
 		let menuDiv = document.createElement('div');
 
+		menuDiv.id = 'menuDiv';
 		Object.assign(menuDiv.style, menuObj.style);
 
 		let menuNav = document.createElement('div');
@@ -838,6 +886,7 @@ class menuWidget {
 				cursor: 'pointer',
 			},
 			parent: menuNav,
+			exitEl: menuDiv,
 		};
 		iconItem.createIcon(iconObj);
 		menuDiv.appendChild(menuNav);
@@ -857,7 +906,7 @@ class menuWidget {
 			item.style.padding = '4px 10px';
 			item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
 			item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
-			item.addEventListener('mouseup', (e)=>{menuFun(e,i);});
+			item.addEventListener('mouseup', (e)=>{});
 			menuList.appendChild(item);
 		}
 
@@ -879,10 +928,28 @@ class loginWidget {
 
 	}
 
-	create(loginObj) {
+	create(loginObj2) {
+
+    let loginObj = {
+        id: 'login',
+        style: {
+            width: '800px',
+            minHeight: '500px',
+            margin: '10px',
+            border: '1px solid green',
+            position: 'absolute',
+            top: '300px',
+            left: '500px',
+            zIndex: '1',
+            backgroundColor: 'white',
+            display: 'block',
+        },
+
+    };
 
 		let loginDiv = document.createElement('div');
 
+		loginDiv.id = 'loginDiv';
 		Object.assign(loginDiv.style, loginObj.style);
 
 		let loginNav = document.createElement('div');
@@ -924,6 +991,7 @@ class loginWidget {
 				cursor: 'pointer',
 			},
 			parent: loginNav,
+			exitEl: loginDiv,
 		};
 		iconItem.createIcon(iconObj);
 		loginDiv.appendChild(loginNav);
@@ -938,54 +1006,70 @@ class loginWidget {
 		};
 		Object.assign(loginMain.style, loginMainStyl);
 
-		let nameInpObj = {
+		let labelObj = {
 			parent: loginMain,
 			id: 'nameInp',
-			textContent: 'Name',
-			style: { width: '100px',},
+			textContent: 'Name (or email):',
+			style: {
+				display: 'flex',
+				flexDirection: 'row',
+  				justifyContent: 'space-between',
+  				textAlign: 'right',
+				width: '600px',
+  				lineHeight: '26px',
+  				margin: '20px',
+			},
 			input: {
 				style: {
-
+					height: '35px',
+					width: '350px',
 				},
-
+				id: 'nameInp',
 			},
 
 		};
 
-		let pwdInpObj = {
-			parent: loginMain,
-			textContent: 'Password:',
-			id: 'pwdInp',
-			style: { width: '100px',},
-			input: {
-				style: {
 
-				},
-
-			},
-
-		};
 
 		let submitObj = {
 			parent: loginMain,
 			textContent: 'login',
-			style: {},
+			id: 'loginSubmit',
+			style: {
+				width: '200px',
+				height: '40px',
+				margin: '20px 0 20px 160px',
+			},
 			hovStyl: {},
 		};
 
 		//name
 		const labelWid = new htmlWidget;
 
-		let nameInp = labelWid.labelInp(nameInpObj);
+		let nameInp = labelWid.labelInp(labelObj);
 
-		let pwdInp = labelWid.labelInp(pwdInpObj);
+		labelObj.id = 'pwdLabel';
+		labelObj.textContent = 'Password:'
+		labelObj.input.id = 'pwdInp';
 
+		let pwdInp = labelWid.labelInp(labelObj);
+
+		const forget = document.createElement('p');
+		const forgetSpan = document.createElement('span');
+		forgetSpan.textContent='forgot password? ';
+		const forgetRef = document.createElement('a');
+		forgetRef.textContent= 'Click here!';
+		forget.appendChild(forgetSpan);
+		forget.appendChild(forgetRef);
+		forget.style.marginLeft = '20px';
+		loginMain.appendChild(forget);
 		let submitBut = labelWid.button(submitObj);
+
 
 		loginDiv.appendChild(loginMain);
 
-		function loginFun(e, i) {
-			console.log('menu item: ' + i);
+		function loginFun(e) {
+			console.log('login submit');
 
 		}
 		return loginDiv;
