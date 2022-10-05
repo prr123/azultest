@@ -190,8 +190,13 @@ addAzulFooter(footerObj) {
 	};
 	let itemObj = {
 		typ: 'p',
-		style: {},
-
+		style: {
+			cursor: 'default',
+		},
+		hovStyle: {
+			cursor: 'pointer',
+		},
+		click: true,
 	}
 
 	for (let i=0; i< colNames.length; i++) {
@@ -200,11 +205,13 @@ addAzulFooter(footerObj) {
 		colhdObj.textContent = colNames[i];
 		this.addElement(colhdObj);
 		let items =  Object.keys(footerObj.cols[colNames[i]]);
-			for (let j=0; j<items.length; j++) {
-				itemObj.parent = col;
-				itemObj.textContent = items[j];
-				let item = this.addElement(itemObj);
-			}
+		let values = footerObj.cols[colNames[i]];
+		for (let j=0; j<items.length; j++) {
+			itemObj.parent = col;
+			itemObj.textContent = items[j];
+			itemObj.file = values[items[j]];
+			let item = this.addElement(itemObj);
+		}
 
 //		console.log('menu items: ' + items);
 	}
@@ -219,8 +226,36 @@ addElement(elObj) {
         let el = document.createElement(elObj.typ);
         Object.assign(el,elObj);
         Object.assign(el.style,elObj.style);
-		if (elObj.hasOwnProperty('parent')){elObj.parent.appendChild(el);} else {document.body.appendChild(el);}
+		if (Object.hasOwn(elObj,'parent')) {
+			if (typeof elObj.parent === 'object') {
+				if (elObj.parent === null) {
+					document.body.appendChild(el);
+				} else {
+					elObj.parent.appendChild(el);
+				}
+			}
+			if (typeof elObj.parent === 'string') {
+				const parentEl = document.getElementById(elObj.parent);
+				if (parentEl !== undefined) {
+					parentEl.appendChild(el);
+				}
+			}
+		}
+		if (Object.hasOwn(elObj, 'click')) {
+			el.addEventListener('mouseup', (event) => {getFile(event)});
+		}
+
+		if (Object.hasOwn(elObj, 'hovStyle')) {
+			el.addEventListener('mouseenter', (event) => {Object.assign(el.style,elObj.hovStyle);});
+			el.addEventListener('mouseleave', (event) => {Object.assign(el.style,elObj.style);});
+		}
+//		if (elObj.hasOwnProperty('parent')){elObj.parent.appendChild(el);} else {document.body.appendChild(el);}
         return el;
+
+		function getFile(e) {
+			console.log('file: ' + e.target.file);
+
+		}
     }
 
     addMeta(metaObj) {
