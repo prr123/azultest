@@ -1,4 +1,14 @@
 // v2 add  select input to class htmlWidget
+//
+
+async function fetchDataAsync(url) {
+    const response = await fetch(url);
+    let respObj = await response.json();
+//    console.log("resp: " + respObj);
+	return respObj;
+}
+
+
 function logoSimple() {
     const svg = new svgWidget;
 
@@ -82,6 +92,241 @@ class HtmlPage {
       Object.assign(divMain.style,pgObj.mainDiv.style);
       document.body.appendChild(divMain);
 	}
+
+    createMenu(menuObj) {
+
+        let menuDiv = document.createElement('div');
+
+        menuDiv.id = 'menuDiv';
+        Object.assign(menuDiv.style, menuObj.style);
+
+        let menuNav = document.createElement('div');
+        menuNav.id = 'menuNav';
+        let menuNavObj = {
+            style: {
+                minHeight: '50px',
+                border: '1px solid blue',
+            },
+        };
+        Object.assign(menuNav.style, menuNavObj.style);
+
+        let menuTitleStylObj = {
+            display: 'inline',
+            position: 'absolute',
+            padding: '5px',
+        };
+
+        let menuTitle = document.createElement('h3');
+        menuTitle.textContent = 'menu';
+        Object.assign(menuTitle.style, menuTitleStylObj);
+        menuNav.appendChild(menuTitle);
+
+        let iconItem = new svgIcon(32);
+        let iconObj = {
+            id: 'menuX',
+            iconType: 'exit',
+            svgStyle: {
+                cursor: 'default',
+                display: 'inline',
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+            },
+            style: {
+                color: 'black',
+            },
+            hovStyle: {
+                cursor: 'pointer',
+            },
+            parent: menuNav,
+            exitEl: menuDiv,
+        };
+        iconItem.createIcon(iconObj);
+        menuDiv.appendChild(menuNav);
+
+        let menuMain = document.createElement('div');
+
+        let menuMainStyl = {
+            border: '1px solid orange',
+            width: '100%',
+            height: '400px',
+        };
+        Object.assign(menuMain.style, menuMainStyl);
+        const menuList = document.createElement('ul');
+        let items =  Object.keys(menuObj.MainMenu);
+        let values = menuObj.MainMenu;
+        for (let i=0; i< items.length; i++) {
+            let item = document.createElement('li');
+            item.textContent = items[i];
+            item.style.padding = '4px 10px';
+            item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
+            item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
+            item.addEventListener('mouseup', (e)=>{this.menuFun(e,i);});
+			//this.getFile(e);
+			let listEl = menuList.appendChild(item);
+			listEl.file = values[items[i]];
+        }
+        menuMain.appendChild(menuList);
+        menuDiv.appendChild(menuMain);
+		this.menuDiv = menuDiv;
+        return menuDiv;
+    }
+
+	menuFun(e, i) {
+		let el = e.target;
+		console.log('menu item: ' + el.file);
+
+	}
+
+
+    createLogin(loginObj2) {
+
+    let loginObj = {
+        id: 'login',
+        style: {
+            width: '800px',
+            minHeight: '500px',
+            margin: '10px',
+            border: '1px solid green',
+            position: 'absolute',
+            top: '300px',
+            left: '500px',
+            zIndex: '1',
+            backgroundColor: 'white',
+            display: 'block',
+        },
+
+    };
+
+        let loginDiv = document.createElement('div');
+
+        loginDiv.id = 'loginDiv';
+        Object.assign(loginDiv.style, loginObj.style);
+
+        let loginNav = document.createElement('div');
+        loginNav.id = 'loginNav';
+        let loginNavObj = {
+            style: {
+                minHeight: '50px',
+                border: '1px solid yellow',
+            },
+        };
+        Object.assign(loginNav.style, loginNavObj.style);
+
+
+        let loginTitleStylObj = {
+            display: 'inline',
+            position: 'absolute',
+            padding: '5px',
+        };
+
+        let loginTitle = document.createElement('h3');
+        loginTitle.textContent = 'login';
+        Object.assign(loginTitle.style, loginTitleStylObj);
+        loginNav.appendChild(loginTitle);
+
+        let iconItem = new svgIcon(32);
+        let iconObj = {
+            id: 'loginX',
+            iconType: 'exit',
+            svgStyle: {
+                cursor: 'default',
+                display: 'inline',
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+            },
+            style: {
+                color: 'black',
+            },
+            hovStyle: {
+                cursor: 'pointer',
+            },
+            parent: loginNav,
+            exitEl: loginDiv,
+        };
+        iconItem.createIcon(iconObj);
+        loginDiv.appendChild(loginNav);
+
+        let loginMain = document.createElement('div');
+        loginMain.id = 'loginMain';
+
+        let loginMainStyl = {
+            border: '1px solid purple',
+            width: '100%',
+            height: '400px',
+        };
+
+        Object.assign(loginMain.style, loginMainStyl);
+
+        let labelObj = {
+            parent: loginMain,
+            id: 'nameInp',
+            textContent: 'Name (or email):',
+            style: {
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                textAlign: 'right',
+                width: '600px',
+                lineHeight: '26px',
+                margin: '20px',
+            },
+            input: {
+                style: {
+                    height: '35px',
+                    width: '350px',
+                },
+                id: 'nameInp',
+            },
+
+        };
+
+
+
+        let submitObj = {
+            parent: loginMain,
+            textContent: 'login',
+            id: 'loginSubmit',
+            style: {
+                width: '200px',
+                height: '40px',
+                margin: '20px 0 20px 160px',
+            },
+            hovStyl: {},
+        };
+
+        //name
+        const labelWid = new htmlWidget;
+
+        let nameInp = labelWid.labelInp(labelObj);
+
+        labelObj.id = 'pwdLabel';
+        labelObj.textContent = 'Password:'
+        labelObj.input.id = 'pwdInp';
+
+        let pwdInp = labelWid.labelInp(labelObj);
+
+        const forget = document.createElement('p');
+        const forgetSpan = document.createElement('span');
+        forgetSpan.textContent='forgot password? ';
+        const forgetRef = document.createElement('a');
+        forgetRef.textContent= 'Click here!';
+        forget.appendChild(forgetSpan);
+        forget.appendChild(forgetRef);
+        forget.style.marginLeft = '20px';
+        loginMain.appendChild(forget);
+        let submitBut = labelWid.button(submitObj);
+
+        loginDiv.appendChild(loginMain);
+		this.loginDiv = loginDiv;
+
+        function loginFun(e) {
+            console.log('login submit');
+
+        }
+        return loginDiv;
+    }
 
 
 addAzulHeader(divMain) {
@@ -192,9 +437,11 @@ addAzulFooter(footerObj) {
 		typ: 'p',
 		style: {
 			cursor: 'default',
+			color: 'black',
 		},
 		hovStyle: {
 			cursor: 'pointer',
+			color: 'red',
 		},
 		click: true,
 	}
@@ -212,16 +459,15 @@ addAzulFooter(footerObj) {
 			itemObj.file = values[items[j]];
 			let item = this.addElement(itemObj);
 		}
-
 //		console.log('menu items: ' + items);
-	}
+	} // i loop
 
 	footerObj.parent.appendChild(footer);
-
 	return footer;
-}
+} // addazul footer
 
-addElement(elObj) {
+
+	addElement(elObj) {
 //      console.log('elObj: ', + elObj);
         let el = document.createElement(elObj.typ);
         Object.assign(el,elObj);
@@ -241,22 +487,29 @@ addElement(elObj) {
 				}
 			}
 		}
+
+		if (Object.hasOwn(elObj, 'name')) {
+			this[elObj.name] = el;
+		}
+
 		if (Object.hasOwn(elObj, 'click')) {
-			el.addEventListener('mouseup', (event) => {getFile(event)});
+			el.addEventListener('mouseup', (event) => {this.getFile(event)});
 		}
 
 		if (Object.hasOwn(elObj, 'hovStyle')) {
 			el.addEventListener('mouseenter', (event) => {Object.assign(el.style,elObj.hovStyle);});
 			el.addEventListener('mouseleave', (event) => {Object.assign(el.style,elObj.style);});
 		}
-//		if (elObj.hasOwnProperty('parent')){elObj.parent.appendChild(el);} else {document.body.appendChild(el);}
         return el;
+	}
 
-		function getFile(e) {
-			console.log('file: ' + e.target.file);
+	getFile(e) {
+//		console.log('file: ' + e.target.file);
+		fetchDataAsync('test.json').then((respObj) => {
+			this.renderJsonObj(respObj);
+		});
+	}
 
-		}
-    }
 
     addMeta(metaObj) {
         const headEl = document.head;
@@ -305,6 +558,25 @@ addElement(elObj) {
 //      	let rulenum2 = styleSheet.cssRules.length;
 //      console.log('rules2: ' + rulenum2);
     }
+
+	renderJsonObj(rendObj) {
+		const parent = this.docmain;
+		const elNum = rendObj.elements.length;
+//		console.log('render: ' + parent.id + ' els: ' + elNum);
+		while (parent.firstChild) {
+    		parent.firstChild.remove();
+		}
+
+		for (let i=0; i<elNum; i++) {
+			let elObj = rendObj.elements[i];
+			elObj.parent = this.docmain;
+			this.addElement(elObj);
+
+		}
+
+	}
+
+
 } //htmlPage
 
   class htmlWidget {
@@ -662,9 +934,8 @@ class svgIcon {
 
     function svgMenuClick(e) {
         e.preventDefault();
-        console.log('menu click: ');
-		const menu = document.getElementById('menuDiv');
-		menu.style.display = 'block';
+//        console.log('menu click: ');
+		azul.menu.style.display = 'block';
     }
 
     function svgXClick(e, exitEl) {
@@ -1011,246 +1282,3 @@ class tabbedDivs {
 	}
 
 } //tabbedDivs
-
-class menuWidget {
-
-	constructor() {
-
-	}
-
-	create(menuObj) {
-
-		let menuDiv = document.createElement('div');
-
-		menuDiv.id = 'menuDiv';
-		Object.assign(menuDiv.style, menuObj.style);
-
-		let menuNav = document.createElement('div');
-		menuNav.id = 'menuNav';
-		let menuNavObj = {
-			style: {
-				minHeight: '50px',
-				border: '1px solid blue',
-			},
-		};
-		Object.assign(menuNav.style, menuNavObj.style);
-
-		let menuTitleStylObj = {
-			display: 'inline',
-			position: 'absolute',
-			padding: '5px',
-		};
-
-		let menuTitle = document.createElement('h3');
-		menuTitle.textContent = 'menu';
-		Object.assign(menuTitle.style, menuTitleStylObj);
-		menuNav.appendChild(menuTitle);
-
-		let iconItem = new svgIcon(32);
-		let iconObj = {
-			id: 'menuX',
-			iconType: 'exit',
-			svgStyle: {
-				cursor: 'default',
-				display: 'inline',
-				position: 'absolute',
-				top: '10px',
-				right: '10px',
-			},
-			style: {
-				color: 'black',
-			},
-			hovStyle: {
-				cursor: 'pointer',
-			},
-			parent: menuNav,
-			exitEl: menuDiv,
-		};
-		iconItem.createIcon(iconObj);
-		menuDiv.appendChild(menuNav);
-
-		let menuMain = document.createElement('div');
-
-		let menuMainStyl = {
-			border: '1px solid orange',
-			width: '100%',
-			height: '400px',
-		};
-		Object.assign(menuMain.style, menuMainStyl);
-		const menuList = document.createElement('ul');
-		for (let i=0; i< menuObj.items.length; i++) {
-			let item = document.createElement('li');
-			item.textContent = menuObj.items[i];
-			item.style.padding = '4px 10px';
-			item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
-			item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
-			item.addEventListener('mouseup', (e)=>{});
-			menuList.appendChild(item);
-		}
-
-		menuMain.appendChild(menuList);
-		menuDiv.appendChild(menuMain);
-
-		function menuFun(e, i) {
-			console.log('menu item: ' + i);
-
-		}
-		return menuDiv;
-	}
-} // menuWidget
-
-
-class loginWidget {
-
-	constructor() {
-
-	}
-
-	create(loginObj2) {
-
-    let loginObj = {
-        id: 'login',
-        style: {
-            width: '800px',
-            minHeight: '500px',
-            margin: '10px',
-            border: '1px solid green',
-            position: 'absolute',
-            top: '300px',
-            left: '500px',
-            zIndex: '1',
-            backgroundColor: 'white',
-            display: 'block',
-        },
-
-    };
-
-		let loginDiv = document.createElement('div');
-
-		loginDiv.id = 'loginDiv';
-		Object.assign(loginDiv.style, loginObj.style);
-
-		let loginNav = document.createElement('div');
-		loginNav.id = 'loginNav';
-		let loginNavObj = {
-			style: {
-				minHeight: '50px',
-				border: '1px solid yellow',
-			},
-		};
-		Object.assign(loginNav.style, loginNavObj.style);
-
-		let loginTitleStylObj = {
-			display: 'inline',
-			position: 'absolute',
-			padding: '5px',
-		};
-
-		let loginTitle = document.createElement('h3');
-		loginTitle.textContent = 'login';
-		Object.assign(loginTitle.style, loginTitleStylObj);
-		loginNav.appendChild(loginTitle);
-
-		let iconItem = new svgIcon(32);
-		let iconObj = {
-			id: 'loginX',
-			iconType: 'exit',
-			svgStyle: {
-				cursor: 'default',
-				display: 'inline',
-				position: 'absolute',
-				top: '10px',
-				right: '10px',
-			},
-			style: {
-				color: 'black',
-			},
-			hovStyle: {
-				cursor: 'pointer',
-			},
-			parent: loginNav,
-			exitEl: loginDiv,
-		};
-		iconItem.createIcon(iconObj);
-		loginDiv.appendChild(loginNav);
-
-		let loginMain = document.createElement('div');
-		loginMain.id = 'loginMain';
-
-		let loginMainStyl = {
-			border: '1px solid purple',
-			width: '100%',
-			height: '400px',
-		};
-		Object.assign(loginMain.style, loginMainStyl);
-
-		let labelObj = {
-			parent: loginMain,
-			id: 'nameInp',
-			textContent: 'Name (or email):',
-			style: {
-				display: 'flex',
-				flexDirection: 'row',
-  				justifyContent: 'space-between',
-  				textAlign: 'right',
-				width: '600px',
-  				lineHeight: '26px',
-  				margin: '20px',
-			},
-			input: {
-				style: {
-					height: '35px',
-					width: '350px',
-				},
-				id: 'nameInp',
-			},
-
-		};
-
-
-
-		let submitObj = {
-			parent: loginMain,
-			textContent: 'login',
-			id: 'loginSubmit',
-			style: {
-				width: '200px',
-				height: '40px',
-				margin: '20px 0 20px 160px',
-			},
-			hovStyl: {},
-		};
-
-		//name
-		const labelWid = new htmlWidget;
-
-		let nameInp = labelWid.labelInp(labelObj);
-
-		labelObj.id = 'pwdLabel';
-		labelObj.textContent = 'Password:'
-		labelObj.input.id = 'pwdInp';
-
-		let pwdInp = labelWid.labelInp(labelObj);
-
-		const forget = document.createElement('p');
-		const forgetSpan = document.createElement('span');
-		forgetSpan.textContent='forgot password? ';
-		const forgetRef = document.createElement('a');
-		forgetRef.textContent= 'Click here!';
-		forget.appendChild(forgetSpan);
-		forget.appendChild(forgetRef);
-		forget.style.marginLeft = '20px';
-		loginMain.appendChild(forget);
-		let submitBut = labelWid.button(submitObj);
-
-
-		loginDiv.appendChild(loginMain);
-
-		function loginFun(e) {
-			console.log('login submit');
-
-		}
-		return loginDiv;
-	}
-
-} //login Widget
