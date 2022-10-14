@@ -28,7 +28,6 @@
 	}		
 
 	init(pgObj) {	  
-
 	  let divMain = document.createElement('div');
 	  this.divMain = divMain;
       Object.assign(divMain,pgObj.mainDiv);
@@ -69,6 +68,15 @@
       	Object.assign(el.style,elObj.style);
 		elObj.parent.append(el);
 		return el;
+	}
+
+	addMeta(metaObj) {
+	
+		const headEl = document.head;
+		let metaEl = document.createElement('meta');
+		metaEl.name = 'topic';
+		metaEl.content = 'creating websites with javascript';
+		headEl.append(metaEl)
 	}
 
   }
@@ -321,7 +329,12 @@ class svgIcon {
 		padding: '0.5em',
 	};
 
+	let metaObj = {};
+
 	azul.init(pageObj);
+
+	azul.addMeta(metaObj);
+
 	let hdObj = {
 		style: hdStyl,
 		parent: azul.header,
