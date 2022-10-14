@@ -72,8 +72,15 @@
     </section>
   </div>
 <script>
-
-
+async function loadFiles() {
+  const response = await fetch('files.json');
+  const names = await response.json();
+  console.log(names);
+}
+window.onload = (event) => {
+	console.log('window loaded');
+	loadFiles();
+}
 </script>
 </body>
 </html>
