@@ -154,7 +154,6 @@ class HtmlPage {
             height: '400px',
         };
         Object.assign(menuMain.style, menuMainStyl);
-        const menuList = document.createElement('ul');
 
         let dispObj = menuObj.MainMenu;
         let menuList = this.dispMenu(dispObj, 0);
@@ -175,7 +174,8 @@ class HtmlPage {
             item.textContent = idx;
             item.style.paddingTop = '4px';
             item.style.paddingLeft = pad + 'px';
-            item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';}>            item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default'>
+            item.addEventListener('mouseenter', (e)=>{e.target.style.color = 'red'; e.target.style.cursor = 'pointer';});
+			item.addEventListener('mouseleave', (e)=>{e.target.style.color = 'black'; e.target.style.cursor = 'default';});
 
             menuList.appendChild(item);
 
